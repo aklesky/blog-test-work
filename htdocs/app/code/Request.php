@@ -2,16 +2,16 @@
 
 namespace App\Code;
 
-
 class Request extends Object
 {
-    protected  $_headers = array();
 
-    protected  $_query = array();
+    protected $_headers = array();
 
-    protected   $_post = array();
+    protected $_query = array();
 
-    protected   $_allowedMethods = array(
+    protected $_post = array();
+
+    protected $_allowedMethods = array(
         'get',
         'post',
         'put',
@@ -38,7 +38,7 @@ class Request extends Object
      */
     public function isAllowed()
     {
-        if($this->getRequestMethod() == null)
+        if ($this->getRequestMethod() == null)
             return false;
 
         return in_array(
@@ -48,7 +48,7 @@ class Request extends Object
 
     public function getPost($key = null)
     {
-        return isset($key) ? $this->getData($key,'_post') : $this->_post;
+        return isset($key) ? $this->getData($key, '_post') : $this->_post;
     }
 
     /**
@@ -57,12 +57,12 @@ class Request extends Object
      */
     public function setPost($data = array())
     {
-        return $this->setData($data,'_post');
+        return $this->setData($data, '_post');
     }
 
     public function getQuery($key = null)
     {
-        return isset($key) ? $this->getData($key,'_query') : $this->_query;
+        return isset($key) ? $this->getData($key, '_query') : $this->_query;
     }
 
     /**
@@ -71,9 +71,8 @@ class Request extends Object
      */
     public function setQuery($data = array())
     {
-        return $this->setData($data,'_query');
+        return $this->setData($data, '_query');
     }
-
 
     /**
      * @return array
@@ -81,13 +80,14 @@ class Request extends Object
     public function getAllHeaders()
     {
         $headers = array();
-        if(function_exists("getallheaders")) {
+        if (function_exists("getallheaders")) {
             $headers = array_merge($headers, getallheaders());
-        } else if(function_exists("apache_request_headers")){
+        } else if (function_exists("apache_request_headers")) {
             $headers = array_merge($headers, apache_request_headers());
-        } else if(function_exists("headers_list")){
+        } else if (function_exists("headers_list")) {
             $headers = array_merge($headers, headers_list());
         }
+
         return $this->_headers = array_merge($headers, $_SERVER);
     }
 
@@ -97,7 +97,7 @@ class Request extends Object
      */
     public function isHeaderExists($key = null)
     {
-        return isset($key) ? array_key_exists($key,$this->_headers) : false;
+        return isset($key) ? array_key_exists($key, $this->_headers) : false;
     }
 
     /**
@@ -116,5 +116,13 @@ class Request extends Object
     {
         return $this->isHeaderExists('HTTP_X_REQUESTED_WITH')
         && mb_strtolower($this->getHeader('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest';
+    }
+
+    public function getRequestPath()
+    {
+        $requestUri = explode('/', $this->getHeader('REQUEST_URI'));
+        $scriptName = explode('/', dirname($this->getHeader('SCRIPT_NAME')));
+
+        return implode('/', array_diff_assoc($requestUri, $scriptName));
     }
 } 

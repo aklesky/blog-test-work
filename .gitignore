@@ -12,3 +12,4 @@ crashlytics-build.properties
 vendor/
 composer.json
 composer.lock
+tests/php

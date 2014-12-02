@@ -4,7 +4,7 @@
 namespace App\Code;
 
 
-abstract class Object
+abstract class Object extends \SplObjectStorage
 {
     /**
      * @param $key
