@@ -5,7 +5,7 @@ namespace App\Code\Models;
 
 use App\Code\ModelAdapter;
 
-class Users extends ModelAdapter
+class Blogs extends ModelAdapter
 {
 
 } 
