@@ -13,6 +13,8 @@ class ModelAdapter implements DbAdapter
      */
     protected $dbAdapter;
 
+    protected $tableName;
+
     /**
      * @param PdoClass $dbAdapter
      */
@@ -20,6 +22,10 @@ class ModelAdapter implements DbAdapter
     public function __construct(PdoClass $dbAdapter)
     {
         $this->dbAdapter = $dbAdapter;
+
+        $reflection = new \ReflectionClass($this);
+        $this->tableName = mb_strtolower($reflection->getShortName());
+        unset($reflection);
     }
 
     public function query()
@@ -47,9 +53,22 @@ class ModelAdapter implements DbAdapter
         // TODO: Implement update() method.
     }
 
-    public function delete()
+    public function deleteById($id)
     {
-        // TODO: Implement delete() method.
+        $prepare = $this->dbAdapter->prepare("delete from `{$this->tableName}` where `Id` = :id");
+        $prepare->bindParam(':id', $id, \PDO::PARAM_INT);
+        if($prepare->execute())
+            return $prepare->rowCount();
+        return false;
+    }
+
+    public function deleteAll()
+    {
+        $prepare = $this->dbAdapter->prepare("delete from `{$this->tableName}`");
+
+        if($prepare->execute())
+            return $prepare->rowCount();
+        return false;
     }
 
     public function getLastInsertId()

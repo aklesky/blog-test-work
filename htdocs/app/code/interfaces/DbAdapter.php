@@ -16,7 +16,9 @@ interface DbAdapter
 
     public function update();
 
-    public function delete();
+    public function deleteById($id);
+
+    public function deleteAll();
 
     public function getLastInsertId();
 
