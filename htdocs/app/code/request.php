@@ -3,15 +3,15 @@
 namespace App\Code;
 
 
-class Request
+class Request extends Object
 {
-    private $_headers = array();
+    protected  $_headers = array();
 
-    private $_query = array();
+    protected  $_query = array();
 
-    private  $_post = array();
+    protected   $_post = array();
 
-    private  $_allowedMethods = array(
+    protected   $_allowedMethods = array(
         'get',
         'post',
         'put',
@@ -30,7 +30,7 @@ class Request
      */
     public function getRequestMethod()
     {
-        return mb_strtolower($_SERVER['REQUEST_METHOD']);
+        return mb_strtolower($this->getHeader('REQUEST_METHOD'));
     }
 
     /**
@@ -48,7 +48,7 @@ class Request
 
     public function getPost($key = null)
     {
-        return isset($key) ? $this->_getData($key,'_post') : $this->_post;
+        return isset($key) ? $this->getData($key,'_post') : $this->_post;
     }
 
     /**
@@ -57,12 +57,12 @@ class Request
      */
     public function setPost($data = array())
     {
-        return $this->_setData($data,'_post');
+        return $this->setData($data,'_post');
     }
 
     public function getQuery($key = null)
     {
-        return isset($key) ? $this->_getData($key,'_query') : $this->_query;
+        return isset($key) ? $this->getData($key,'_query') : $this->_query;
     }
 
     /**
@@ -71,39 +71,10 @@ class Request
      */
     public function setQuery($data = array())
     {
-        return $this->_setData($data,'_query');
+        return $this->setData($data,'_query');
     }
 
-    /**
-     * @param $key
-     * @param $request
-     * @return null
-     *
-     * get a key from $request array
-     */
 
-    private function _getData($key, $request)
-    {
-        if(isset($this->$request)) {
-            $data = $this->$request;
-            return !empty($data[$key]) ? $data[$key] : null;
-        }
-        return null;
-    }
-
-    /**
-     * merge $data and $arrayName arrays
-     * @param $data
-     * @param $arrayName
-     * @return $this
-     */
-    private function _setData($data, $arrayName)
-    {
-        if(isset($this->$arrayName)) {
-            $this->$arrayName = array_merge($this->$arrayName, $data);
-        }
-        return $this;
-    }
     /**
      * @return array
      */

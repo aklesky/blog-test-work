@@ -15,19 +15,20 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $_POST['test1'] = 2;
         $_GET['query2'] = 'test3';
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'xmlhttprequest';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $this->object = new Request();
     }
 
     public function testIsRequiredPropertiesAreExistsInTheClass()
     {
         $property = new ReflectionProperty($this->object, '_headers');
-        $this->assertTrue($property->isPrivate());
+        $this->assertTrue($property->isProtected());
         $property = new ReflectionProperty($this->object, '_query');
-        $this->assertTrue($property->isPrivate());
+        $this->assertTrue($property->isProtected());
         $property = new ReflectionProperty($this->object, '_post');
-        $this->assertTrue($property->isPrivate());
+        $this->assertTrue($property->isProtected());
         $property = new ReflectionProperty($this->object, '_allowedMethods');
-        $this->assertTrue($property->isPrivate());
+        $this->assertTrue($property->isProtected());
     }
 
     public function testMethodGetRequestedMethodIsExistsAndReturnsMethod()
@@ -36,7 +37,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             $this->object, 'getRequestMethod');
         $this->assertTrue($method->isPublic(), 'getRequestMethod is not a public.');
 
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+
         $this->assertNotEmpty($this->object->getRequestMethod(),
             'getRequestMethod returns a empty string');
         $this->assertEquals($this->object->getRequestMethod(),'get',
