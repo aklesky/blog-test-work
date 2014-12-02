@@ -18,7 +18,7 @@ interface DbAdapter
 
     public function delete();
 
-    public function getInsertId();
+    public function getLastInsertId();
 
     public function countRows();
 

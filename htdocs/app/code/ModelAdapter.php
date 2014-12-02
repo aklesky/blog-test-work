@@ -52,14 +52,14 @@ class ModelAdapter implements DbAdapter
         // TODO: Implement delete() method.
     }
 
-    public function getInsertId()
+    public function getLastInsertId()
     {
-        // TODO: Implement getInsertId() method.
+        return $this->dbAdapter->lastInsertId();
     }
 
     public function countRows()
     {
-        // TODO: Implement countRows() method.
+
     }
 
     public function getAffectedRows()
