@@ -44,7 +44,11 @@ class App extends Object
     {
         try {
             $reflection = new \ReflectionClass($controller);
-            $instance = $reflection->newInstance();
+            $instance = $reflection->newInstance(
+                Response::getInstance(),
+                Request::getInstance()
+                );
+
             $reflection->getMethod($action)
                 ->invokeArgs($instance, $arguments);
         } catch (\LogicException $e) {

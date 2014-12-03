@@ -11,12 +11,20 @@ namespace app\code;
 
 class Controller extends Object
 {
+
     /** @var  Response */
+
     protected $response;
 
     /** @var  Request */
 
     protected $request;
+
+    public function __construct(Response $response, Request $request)
+    {
+        $this->request = $request;
+        $this->response = $response;
+    }
 
     /**
      * @return string
