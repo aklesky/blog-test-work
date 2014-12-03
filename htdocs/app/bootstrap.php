@@ -12,6 +12,6 @@ define('AppModels', AppCode . 'models');
 
 spl_autoload_extensions(".php");
 spl_autoload_register();
-echo "<pre>";
+
 App::run();
 ?>

@@ -11,6 +11,13 @@ namespace app\code;
 
 class Controller extends Object
 {
+    /** @var  Response */
+    protected $response;
+
+    /** @var  Request */
+
+    protected $request;
+
     /**
      * @return string
      * @route /

@@ -94,16 +94,30 @@ class ModelAdapter implements DbAdapter
         return $this;
     }
 
+    public function getTableColumns()
+    {
+        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
+        if ($statement->execute()) {
+            $fields = array();
+            while ($record = $statement->fetch()) {
+                $fields[] = $record['Field'];
+            }
+
+            return $fields;
+        }
+
+        return null;
+    }
+
     /**
      * @return static
      */
     public function create()
     {
-        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
-        if ($statement->execute()) {
+        if (($fields = $this->getTableColumns())) {
             $object = new static();
-            while ($record = $statement->fetch()) {
-                $object->$record['Field'] = null;
+            foreach ($fields as $field) {
+                $object->$field = null;
             }
 
             return $object;

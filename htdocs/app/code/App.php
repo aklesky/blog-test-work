@@ -29,8 +29,9 @@ class App extends Object
     public function invoke($router = null)
     {
 
+        //@todo handle / requests
         if (empty($router))
-            return $this->invokeController(Controller::getClass(), "index", array());
+            return $this->invokeController(Controller::getClass(), "notFound", array());
 
         return $this->invokeController(
             $router['controller'],
