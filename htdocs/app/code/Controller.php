@@ -32,7 +32,7 @@ class Controller extends Object
      */
     public function index()
     {
-        echo "Hello World";
+        $this->response->ViewResponse("Hello World");
     }
 
     /**
@@ -41,6 +41,6 @@ class Controller extends Object
 
     public function notFound()
     {
-        echo "404";
+        $this->response->ViewResponse("404",404);
     }
 }

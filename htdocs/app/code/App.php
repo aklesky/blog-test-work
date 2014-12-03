@@ -47,7 +47,7 @@ class App extends Object
             $instance = $reflection->newInstance(
                 Response::getInstance(),
                 Request::getInstance()
-                );
+            );
 
             $reflection->getMethod($action)
                 ->invokeArgs($instance, $arguments);
