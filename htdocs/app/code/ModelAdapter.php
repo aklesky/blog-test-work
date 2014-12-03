@@ -14,29 +14,38 @@ class ModelAdapter implements DbAdapter
     /**
      * @var \PDO
      */
-    protected $__dbAdapter;
+    protected $dbAdapter;
 
-    protected $__tableName;
+    protected $tableName;
 
     protected $model;
 
-    private $_recordData = array();
+    protected $recordData = array();
+
+    protected $id;
 
     public function __construct()
     {
         /** @var Database $database */
         $database = Database::getInstance();
-        $this->__dbAdapter = $database->getAdapter();
+        $this->dbAdapter = $database->getAdapter();
         $this->model = new \ReflectionClass($this);
-        $this->__tableName = mb_strtolower($this->model->getShortName());
+        $this->tableName = mb_strtolower($this->model->getShortName());
     }
 
     public function __set($key, $value)
     {
-        $this->_recordData[mb_strtolower($key)] = array(
-            'fieldName' => $key,
-            'value' => $value
-        );
+        if (mb_strtolower($key) == 'id') {
+            $this->id = $value;
+        } else {
+            $this->recordData[mb_strtolower($key)] = array(
+                'fieldName' => $key,
+                'value' => $value,
+                'original' => $value
+            );
+        }
+
+        return $this;
     }
 
     public function __call($key, $value)
@@ -56,8 +65,8 @@ class ModelAdapter implements DbAdapter
     private function get($key)
     {
         $key = mb_strtolower($key);
-        if (isset($this->_recordData[$key]))
-            return $this->_recordData[$key]['value'];
+        if (isset($this->recordData[$key]))
+            return $this->recordData[$key]['value'];
 
         return null;
     }
@@ -65,29 +74,100 @@ class ModelAdapter implements DbAdapter
     public function set($key, $value)
     {
         $key = mb_strtolower($key);
-        if (isset($this->_recordData[$key])) {
-            $originalValue = $this->get($key);
-            $this->_recordData[$key]['original'] = $originalValue;
-            $this->_recordData[$key]['value'] = $value;
+        if (isset($this->recordData[$key])) {
+            $this->recordData[$key]['original'] = $this->get($key);
+            $this->recordData[$key]['value'] = $value;
         }
 
         return $this;
     }
 
-    public function save()
+    public function getId()
     {
-        // TODO: Implement insert() method.
+        return $this->id;
     }
 
-    public function update()
+    private function setId($id)
     {
-        // TODO: Implement update() method.
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function create()
+    {
+        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
+        if ($statement->execute()) {
+            $object = new static();
+            while ($record = $statement->fetch()) {
+                $object->$record['Field'] = null;
+            }
+
+            return $object;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return $this|ModelAdapter|bool
+     */
+    public function save()
+    {
+        if ($this->getId() !== null) {
+            return $this->update();
+        }
+
+        return $this->insert();
+    }
+
+    protected function update()
+    {
+        $updateData = array();
+        foreach ($this->recordData as $record) {
+            $updateData[] = "`{$record['fieldName']}`='{$record['value']}'";
+        }
+
+        $prepare = $this->dbAdapter->prepare(
+            "update {$this->tableName} set " . implode(',', $updateData) .
+            " where `Id`= :id"
+        );
+
+        $prepare->bindParam(":id", $this->getId(), \PDO::PARAM_INT);
+
+        if (!$prepare->execute())
+            return false;
+
+        return $this;
+    }
+
+    protected function insert()
+    {
+
+        foreach ($this->recordData as $record) {
+            $fields[] = $record['fieldName'];
+            $values[] = $record['value'];
+        }
+        $prepare = $this->dbAdapter->prepare(
+            "insert into `{$this->tableName}` (`" . implode('`,`', $fields) . "`) values " .
+            "('" . implode("','", $values) . "')"
+        );
+        if (!$prepare->execute())
+            return false;
+
+        $object = $this->selectById($this->dbAdapter->lastInsertId());
+        $this->setId($object->getId());
+
+        return $this;
     }
 
     public function delete()
     {
-        if (isset($this->id)) {
-            return $this->deleteById($this->id);
+        if (($id = $this->getId()) != null) {
+            return $this->deleteById($id);
         }
 
         return false;
@@ -95,10 +175,20 @@ class ModelAdapter implements DbAdapter
 
     public function deleteById($id)
     {
-        $prepare = $this->__dbAdapter->prepare(
-            "delete from `{$this->__tableName}` where `Id` = :id"
+        $prepare = $this->dbAdapter->prepare(
+            "delete from `{$this->tableName}` where `Id` = :id"
         );
         $prepare->bindParam(':id', $id, \PDO::PARAM_INT);
+
+        if ($prepare->execute())
+            return $prepare->rowCount();
+
+        return false;
+    }
+
+    public function deleteAll()
+    {
+        $prepare = $this->dbAdapter->prepare("delete from `{$this->tableName}`");
 
         if ($prepare->execute())
             return $prepare->rowCount();
@@ -111,8 +201,8 @@ class ModelAdapter implements DbAdapter
         if (empty($id))
             return false;
 
-        $prepare = $this->__dbAdapter->prepare(
-            "select * from `{$this->__tableName}` where Id = :id"
+        $prepare = $this->dbAdapter->prepare(
+            "select * from `{$this->tableName}` where Id = :id"
         );
         $prepare->bindParam(':id', $id, \PDO::PARAM_INT);
         if ($prepare->execute())
@@ -123,8 +213,8 @@ class ModelAdapter implements DbAdapter
 
     public function selectAll()
     {
-        $prepare = $this->__dbAdapter->prepare(
-            "select * from  {$this->__tableName}"
+        $prepare = $this->dbAdapter->prepare(
+            "select * from  {$this->tableName}"
         );
 
         if ($prepare->execute() && $prepare->rowCount() > 0) {
@@ -137,20 +227,5 @@ class ModelAdapter implements DbAdapter
         }
 
         return null;
-    }
-
-    public function deleteAll()
-    {
-        $prepare = $this->__dbAdapter->prepare("delete from `{$this->__tableName}`");
-
-        if ($prepare->execute())
-            return $prepare->rowCount();
-
-        return false;
-    }
-
-    public function getLastInsertId()
-    {
-        return $this->__dbAdapter->lastInsertId();
     }
 }

@@ -11,13 +11,11 @@ interface DbAdapter
 
     public function save();
 
-    public function update();
-
     public function delete();
 
     public function deleteById($id);
 
     public function deleteAll();
 
-    public function getLastInsertId();
+    public function create();
 } 
