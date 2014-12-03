@@ -52,4 +52,8 @@ class Object extends \SplObjectStorage
 
         return $instance;
     }
+
+    static public function getClass() {
+        return get_called_class();
+    }
 } 

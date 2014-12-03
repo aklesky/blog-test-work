@@ -4,14 +4,18 @@ namespace App\Code\Controllers;
 use app\code\Controller;
 
 /**
- * Class Blogs
+ * Class Index
  *
  * @package App\Code\Controllers
- * @route /blogs
+ * @route /
  */
-class Blogs extends Controller
+
+class Index extends Controller
 {
+    /**
+     * @route /
+     */
     public function index()
     {
     }
-} 
+}

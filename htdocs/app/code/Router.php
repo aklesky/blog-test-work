@@ -82,11 +82,15 @@ class Router extends Object
 
             foreach ($controllerClass->getMethods() as $method) {
 
-                $routeName['routes'][] = array(
-                    'controller' => $controllerName,
-                    'pattern' => $this->_getRoutePattern($method, $controllerRoute),
-                    'method' => $method->getName(),
-                );
+                if ($method->isPublic() && !$method->isStatic()
+                    && $method->isUserDefined()
+                ) {
+                    $routeName['routes'][] = array(
+                        'controller' => $controllerName,
+                        'pattern' => $this->_getRoutePattern($method, $controllerRoute),
+                        'method' => $method->getName(),
+                    );
+                }
             }
 
             return $routeName;

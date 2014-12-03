@@ -1,5 +1,6 @@
 <?php
 namespace App\Code\Controllers;
+use app\code\Controller;
 
 /**
  * Class Users
@@ -8,15 +9,15 @@ namespace App\Code\Controllers;
  * @route /users
  */
 
-class Users
+class Users extends Controller
 {
 
     /**
-     * @route /index
+     * @route /
      */
     public function index()
     {
-
+        echo "Users";
     }
 
     /**
