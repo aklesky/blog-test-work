@@ -7,7 +7,6 @@ class Uri extends Object
 
     protected $requestUri;
 
-
     public function __construct($uri = null)
     {
         $this->requestUri = parse_url($uri);
@@ -28,10 +27,11 @@ class Uri extends Object
         return $this->getData('scheme', 'requestUri');
     }
 
-    private function clearPath($path = null) {
-        return preg_replace('#(?<=/)[.+]+(?=/)#',null,
-            preg_replace('#(/+){2,}#','/',
-                trim($path,"/\\")
+    private function clearPath($path = null)
+    {
+        return preg_replace('#(?<=/)[.+]+(?=/)#', null,
+            preg_replace('#(/+){2,}#', '/',
+                trim($path, "/\\")
             )
         );
     }

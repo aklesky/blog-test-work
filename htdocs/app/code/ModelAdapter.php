@@ -16,9 +16,6 @@ class ModelAdapter implements DbAdapter
 
     protected $model;
 
-
-
-
     public function __construct()
     {
         /** @var Database $database */
@@ -38,10 +35,12 @@ class ModelAdapter implements DbAdapter
         // TODO: Implement update() method.
     }
 
-    public function delete() {
-        if(isset($this->id)){
+    public function delete()
+    {
+        if (isset($this->id)) {
             return $this->deleteById($this->id);
         }
+
         return false;
     }
 
@@ -71,6 +70,7 @@ class ModelAdapter implements DbAdapter
             return $prepare->fetchObject($this->model->getName());
 
         var_dump($prepare->errorInfo());
+
         return false;
     }
 
@@ -82,11 +82,13 @@ class ModelAdapter implements DbAdapter
 
         if ($prepare->execute() && $prepare->rowCount() > 0) {
             $collection = array();
-            while($record = $prepare->fetchObject($this->model->getName())) {
+            while ($record = $prepare->fetchObject($this->model->getName())) {
                 $collection[] = $record;
             }
+
             return $collection;
         }
+
         return null;
     }
 

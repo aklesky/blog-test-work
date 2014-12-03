@@ -13,6 +13,7 @@ class Router extends Object
             if (preg_match("#^{$action['pattern']}$#i", $path, $match)) {
                 unset($match[0]);
                 $action['segments'] = $match;
+
                 return $action;
             }
         }

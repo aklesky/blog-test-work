@@ -18,13 +18,13 @@ class Database extends Object
                          $driver = null, $userName = null,
                          $userPass = null)
     {
-        $this->_pdoClass = new \PDO("{$driver}:dbname={$database};host={$hostName}", $userName, $userPass,
+        $this->_pdoClass = new \PDO("{$driver}:dbname={$database};host={$hostName}",
+            $userName, $userPass,
             array(
                 \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
             )
         );
     }
-
 
     public function getAdapter()
     {
