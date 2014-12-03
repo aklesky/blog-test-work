@@ -4,7 +4,7 @@
 namespace App\Code;
 
 
-abstract class Object extends \SplObjectStorage
+class Object extends \SplObjectStorage
 {
     /**
      * @param $key
@@ -35,5 +35,17 @@ abstract class Object extends \SplObjectStorage
             $this->$arrayName = array_merge($this->$arrayName, $data);
         }
         return $this;
+    }
+
+    static public function getInstance()
+    {
+        static $instance;
+        $class = get_called_class();
+
+        if(!($instance instanceof $class)) {
+            $reflection = new \ReflectionClass($class);
+            $instance = $reflection->newInstanceArgs(func_get_args());
+        }
+        return $instance;
     }
 } 

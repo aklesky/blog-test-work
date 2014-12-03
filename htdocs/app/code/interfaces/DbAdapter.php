@@ -5,24 +5,19 @@ namespace App\Code\Interfaces;
 
 interface DbAdapter
 {
+    public function selectById($id);
 
-    public function query();
+    public function selectAll();
 
-    public function fetch();
-
-    public function select();
-
-    public function insert();
+    public function save();
 
     public function update();
+
+    public function delete();
 
     public function deleteById($id);
 
     public function deleteAll();
 
     public function getLastInsertId();
-
-    public function countRows();
-
-    public function getAffectedRows();
 } 
