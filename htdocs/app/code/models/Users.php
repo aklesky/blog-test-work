@@ -7,5 +7,4 @@ use App\Code\ModelAdapter;
 
 class Users extends ModelAdapter
 {
-
 } 
