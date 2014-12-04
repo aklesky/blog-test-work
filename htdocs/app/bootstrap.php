@@ -1,17 +1,23 @@
 <?php
 namespace App;
 
+error_reporting(E_ALL & ~E_NOTICE);
+
 use App\Code\App;
 
-define('AppCode', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'code' . DIRECTORY_SEPARATOR);
+define('DS', DIRECTORY_SEPARATOR);
 
-define('AppControllers', AppCode . 'controllers');
-
-define('AppModels', AppCode . 'models');
-
+define('App', dirname(__FILE__) . DS);
+define('AppCode', App . 'code' . DS);
 
 spl_autoload_extensions(".php");
 spl_autoload_register();
 
-App::run();
+session_start();
+
+App::run(
+    AppCode . 'controllers',
+    App . 'views',
+    require_once 'config.php'
+);
 ?>

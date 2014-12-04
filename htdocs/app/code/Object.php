@@ -43,7 +43,8 @@ class Object extends \SplObjectStorage
     static public function getInstance()
     {
         static $instance;
-        $class = get_called_class();
+
+        $class = self::getClass();
 
         if (!($instance instanceof $class)) {
             $reflection = new \ReflectionClass($class);
@@ -53,7 +54,15 @@ class Object extends \SplObjectStorage
         return $instance;
     }
 
-    static public function getClass() {
+    static public function getClass()
+    {
         return get_called_class();
+    }
+
+    static public function getName()
+    {
+        $array = explode('\\', get_called_class());
+
+        return end($array);
     }
 } 

@@ -15,12 +15,37 @@ class App extends Object
      */
     protected $router;
 
-    public function __construct()
+    protected $config;
+
+    protected $controllersDirectory;
+
+    protected $viewsDirectory;
+
+    public function __construct(
+        $controllersDirectory = null,
+        $viewsDirectory = null,
+        $config = array())
+    {
+        $this->controllersDirectory = $controllersDirectory;
+
+        $this->viewsDirectory = $viewsDirectory;
+
+        $this->config = $config;
+
+    }
+
+    protected  function setUp()
     {
         $this->request = Request::getInstance();
         $this->router = Router::getInstance();
-        $this->router->scanRoutes(AppControllers);
-
+        $this->router = Router::getInstance();
+        $this->router->scanRoutes($this->controllersDirectory);
+        View::getInstance($this->viewsDirectory);
+        Database::getInstance(
+            $this->config['host'], $this->config['database'],
+            $this->config['driver'], $this->config['username'],
+            $this->config['password']
+        );
         $this->invoke(
             $this->router->getRoute($this->request->getRequestPath())
         );
@@ -28,10 +53,9 @@ class App extends Object
 
     public function invoke($router = null)
     {
-
         //@todo handle / requests
         if (empty($router))
-            return $this->invokeController(Controller::getClass(), "notFound", array());
+            return $this->invokeController(Controller::getClass(), "index", array());
 
         return $this->invokeController(
             $router['controller'],
@@ -46,7 +70,8 @@ class App extends Object
             $reflection = new \ReflectionClass($controller);
             $instance = $reflection->newInstance(
                 Response::getInstance(),
-                Request::getInstance()
+                Request::getInstance(),
+                View::getInstance()->setView($action,$reflection->getShortName())
             );
 
             $reflection->getMethod($action)
@@ -60,8 +85,9 @@ class App extends Object
         return null;
     }
 
-    public static function run()
+    public static function run($controllersDirectory, $viewsDirectory, $config)
     {
-        return parent::getInstance();
+        $instance = parent::getInstance($controllersDirectory, $viewsDirectory, $config);
+        $instance->setUp();
     }
 } 

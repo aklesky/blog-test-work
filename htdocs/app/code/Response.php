@@ -120,7 +120,9 @@ class Response extends Object
     }
 
     /**
-     * print headers and json response
+     * @param null $data
+     * @param int $headerCode
+     * @return $this
      */
     public function JsonResponse($data = null, $headerCode = 200)
     {

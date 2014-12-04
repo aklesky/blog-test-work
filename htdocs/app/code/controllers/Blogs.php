@@ -11,7 +11,9 @@ use app\code\Controller;
  */
 class Blogs extends Controller
 {
+
     public function index()
     {
+        $this->renderResponse();
     }
 } 

@@ -20,10 +20,27 @@ class Controller extends Object
 
     protected $request;
 
-    public function __construct(Response $response, Request $request)
+    /** @var  View */
+
+    protected $view;
+
+    /**
+     * @param Response $response
+     * @param Request $request
+     * @param View $view
+     */
+    public function __construct(Response $response, Request $request, View $view)
     {
         $this->request = $request;
         $this->response = $response;
+        $this->view = $view;
+    }
+
+    protected function renderResponse($view = null)
+    {
+        $this->response->ViewResponse(
+            $this->view->setView($view, self::getName())
+        );
     }
 
     /**
@@ -32,7 +49,7 @@ class Controller extends Object
      */
     public function index()
     {
-        $this->response->ViewResponse("Hello World");
+        $this->renderResponse(404);
     }
 
     /**
@@ -41,6 +58,6 @@ class Controller extends Object
 
     public function notFound()
     {
-        $this->response->ViewResponse("404",404);
+        $this->renderResponse(404);
     }
 }
