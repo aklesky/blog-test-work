@@ -118,11 +118,33 @@ class Request extends Object
         && mb_strtolower($this->getHeader('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest';
     }
 
+    public function getRelativeUrl()
+    {
+        return '//' . $this->getHeader('HTTP_HOST') . DS .
+        ltrim($this->getBasePath(), DS);
+    }
+
     public function getRequestPath()
     {
-        $requestUri = explode('/', $this->getHeader('REQUEST_URI'));
-        $scriptName = explode('/', dirname($this->getHeader('SCRIPT_NAME')));
+        $requestUri = explode('/',
+            $this->clearPath($this->getHeader('REQUEST_URI'))
+        );
+        $scriptName = explode('/', $this->getBasePath());
 
         return implode('/', array_diff_assoc($requestUri, $scriptName));
     }
-} 
+
+    protected function getBasePath()
+    {
+        return $this->clearPath(dirname($this->getHeader('SCRIPT_NAME')));
+    }
+
+    protected function clearPath($path = null)
+    {
+        return preg_replace('#(?<=/)[.+]+(?=/)#', null,
+            preg_replace('#(/+){2,}#', '/',
+                trim($path, "/\\")
+            )
+        );
+    }
+}

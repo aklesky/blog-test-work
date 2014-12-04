@@ -1,5 +1,6 @@
 <?php
-/** @var $this App\Code\View */
+namespace App\Code;
+/** @var $this View */
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,7 +16,7 @@
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
-    <link rel="stylesheet" href="./media/css/blog.css">
+    <link rel="stylesheet" href="<?php echo App::getCss('blog.css');?>">
 
     <!-- Latest compiled and minified JavaScript -->
 

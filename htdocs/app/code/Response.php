@@ -156,6 +156,19 @@ class Response extends Object
         return $this;
     }
 
+    public function XmlResponse($data = null, $headerCode = 200)
+    {
+        $this->clearHeaders()
+            ->setHeader("Cache-Control", "no-cache, must-revalidate")
+            ->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT")
+            ->setHeader("Content-Type", "text/xml;charset=utf-8")
+            ->setStatus($headerCode)
+            ->printHeaders();
+        echo $data;
+
+        return $this;
+    }
+
     public function Redirect($location = null)
     {
         if (empty($location))

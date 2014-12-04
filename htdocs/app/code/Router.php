@@ -82,9 +82,7 @@ class Router extends Object
 
             foreach ($controllerClass->getMethods() as $method) {
 
-                if ($method->isPublic() && !$method->isStatic()
-                    && $method->isUserDefined()
-                ) {
+                if ($this->_isMethodAllowed($method)) {
                     $routeName['routes'][] = array(
                         'controller' => $controllerName,
                         'pattern' => $this->_getRoutePattern($method, $controllerRoute),
@@ -97,6 +95,11 @@ class Router extends Object
         } catch (\ReflectionException $e) {
             return false;
         }
+    }
+
+    private function _isMethodAllowed(\ReflectionMethod $method) {
+        return $method->isPublic() && !$method->isStatic()
+        && $method->isUserDefined() && !$method->isConstructor();
     }
 
     private function _getRoutePattern(\Reflector $reflector, $base = null)

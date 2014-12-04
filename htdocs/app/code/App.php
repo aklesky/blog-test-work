@@ -31,10 +31,9 @@ class App extends Object
         $this->viewsDirectory = $viewsDirectory;
 
         $this->config = $config;
-
     }
 
-    protected  function setUp()
+    protected function setUp()
     {
         $this->request = Request::getInstance();
         $this->router = Router::getInstance();
@@ -71,7 +70,8 @@ class App extends Object
             $instance = $reflection->newInstance(
                 Response::getInstance(),
                 Request::getInstance(),
-                View::getInstance()->setView($action,$reflection->getShortName())
+                View::getInstance()
+                    ->setView($action, $reflection->getShortName())
             );
 
             $reflection->getMethod($action)
@@ -89,5 +89,26 @@ class App extends Object
     {
         $instance = parent::getInstance($controllersDirectory, $viewsDirectory, $config);
         $instance->setUp();
+    }
+
+    public static function getMedia()
+    {
+        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
+    }
+
+    public static function getCss($filename = null)
+    {
+        if(empty($filename))
+            return null;
+
+        return self::getMedia() . 'css' . DS . $filename;
+    }
+
+    public static function getJs()
+    {
+        if(empty($filename))
+            return null;
+
+        return self::getMedia() . 'js' . DS . $filename;
     }
 } 

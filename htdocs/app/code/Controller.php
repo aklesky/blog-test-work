@@ -43,6 +43,11 @@ class Controller extends Object
         );
     }
 
+    protected function renderXmlResponse($data)
+    {
+        $this->response->XmlResponse($data);
+    }
+
     /**
      * @return string
      * @route /
