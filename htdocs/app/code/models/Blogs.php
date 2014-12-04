@@ -2,7 +2,6 @@
 
 namespace App\Code\Models;
 
-
 use App\Code\ModelAdapter;
 
 /**
@@ -12,9 +11,7 @@ use App\Code\ModelAdapter;
  *
  * @route /blogs
  */
-
 class Blogs extends ModelAdapter
 {
 
-
-} 
+}

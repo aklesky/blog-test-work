@@ -1,15 +1,10 @@
-<?php
-
-
-
-?>
-<?php if($this->blogPosts !== null) : ?>
+<?php if($this->Blogs !== null) : ?>
     <?php
         /**
             @var $post App\Code\Models\Blogs
          */
     ?>
-    <?php foreach($this->blogPosts as $post) : ?>
+    <?php foreach($this->Blogs as $post) : ?>
 <div class="blog-post">
     <h2 class="blog-post-title"><?php echo $post->getBlogTitle();?> --> posTitle</h2>
     <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p>

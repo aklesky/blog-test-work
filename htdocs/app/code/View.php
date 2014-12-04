@@ -81,7 +81,7 @@ class View extends Object
     public function __toString()
     {
         $this->content = $this->loadTemplateFile($this->view);
-        $content =  $this->loadTemplateFile(
+        $content = $this->loadTemplateFile(
             $this->viewDirectory . $this->layout . $this->defaultExtension
         );
 
