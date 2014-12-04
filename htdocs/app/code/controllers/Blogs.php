@@ -15,6 +15,8 @@ class Blogs extends Controller
 
     public function index()
     {
+        $this->blogPosts = $this->model->selectAll();
+
         $this->renderResponse();
     }
 

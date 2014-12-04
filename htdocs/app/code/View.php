@@ -19,6 +19,8 @@ class View extends Object
 
     protected $defaultExtension = '.phtml';
 
+    protected $view = null;
+
     public function __construct($viewsDirectory = null, $layoutFile = null)
     {
 
@@ -33,6 +35,11 @@ class View extends Object
     public function __set($key, $var)
     {
         $this->varsCollection[$key] = $var;
+    }
+
+    public function __get($key)
+    {
+        return $this->varsCollection[$key];
     }
 
     public function setLayoutFile($layout = null)
@@ -60,12 +67,10 @@ class View extends Object
         if (empty($view))
             return $this;
 
-        $fileName = $this->viewDirectory .
+        $this->view = $this->viewDirectory .
             (!empty($directory) ? $directory . DS : null) .
             trim($view, $this->defaultExtension) .
             $this->defaultExtension;
-
-        $this->content = $this->loadTemplateFile($fileName);
 
         return $this;
     }
@@ -75,9 +80,12 @@ class View extends Object
      */
     public function __toString()
     {
-        return $this->loadTemplateFile(
+        $this->content = $this->loadTemplateFile($this->view);
+        $content =  $this->loadTemplateFile(
             $this->viewDirectory . $this->layout . $this->defaultExtension
         );
+
+        return $content;
     }
 
     protected function loadTemplateFile($filename)
@@ -86,7 +94,6 @@ class View extends Object
             return null;
 
         ob_start();
-        extract($this->varsCollection);
         include $filename;
         $content = ob_get_contents();
         ob_get_clean();

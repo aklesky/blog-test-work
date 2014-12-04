@@ -19,16 +19,21 @@ class App extends Object
 
     protected $controllersDirectory;
 
+    protected $modelsDirectory;
+
     protected $viewsDirectory;
 
     public function __construct(
         $controllersDirectory = null,
+        $modelDirectory = null,
         $viewsDirectory = null,
         $config = array())
     {
         $this->controllersDirectory = $controllersDirectory;
 
         $this->viewsDirectory = $viewsDirectory;
+
+        $this->modelsDirectory = $modelDirectory;
 
         $this->config = $config;
     }
@@ -73,7 +78,6 @@ class App extends Object
                 View::getInstance()
                     ->setView($action, $reflection->getShortName())
             );
-
             $reflection->getMethod($action)
                 ->invokeArgs($instance, $arguments);
         } catch (\LogicException $e) {
@@ -85,9 +89,17 @@ class App extends Object
         return null;
     }
 
-    public static function run($controllersDirectory, $viewsDirectory, $config)
+    public static function run(
+        $controllersDirectory,
+        $modelDirectory,
+        $viewsDirectory,
+        $config)
     {
-        $instance = parent::getInstance($controllersDirectory, $viewsDirectory, $config);
+        $instance = parent::getInstance(
+            $controllersDirectory,
+            $modelDirectory,
+            $viewsDirectory,
+            $config);
         $instance->setUp();
     }
 
@@ -98,7 +110,7 @@ class App extends Object
 
     public static function getCss($filename = null)
     {
-        if(empty($filename))
+        if (empty($filename))
             return null;
 
         return self::getMedia() . 'css' . DS . $filename;
@@ -106,9 +118,16 @@ class App extends Object
 
     public static function getJs()
     {
-        if(empty($filename))
+        if (empty($filename))
             return null;
 
         return self::getMedia() . 'js' . DS . $filename;
+    }
+
+    public static function getModel($model)
+    {
+        $reflection = new \ReflectionClass(ModelsNameSpace . $model);
+
+        return $reflection->newInstance();
     }
 } 

@@ -24,6 +24,10 @@ class Controller extends Object
 
     protected $view;
 
+    /** @var  ModelAdapter */
+
+    protected $model;
+
     /**
      * @param Response $response
      * @param Request $request
@@ -34,6 +38,7 @@ class Controller extends Object
         $this->request = $request;
         $this->response = $response;
         $this->view = $view;
+        $this->getModel();
     }
 
     protected function renderResponse($view = null)
@@ -43,9 +48,19 @@ class Controller extends Object
         );
     }
 
+    public function __set($key, $value)
+    {
+        $this->view->$key = $value;
+    }
+
     protected function renderXmlResponse($data)
     {
         $this->response->XmlResponse($data);
+    }
+
+    protected function getModel()
+    {
+        $this->model = App::getModel($this::getName());
     }
 
     /**

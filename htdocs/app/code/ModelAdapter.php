@@ -64,7 +64,9 @@ class ModelAdapter implements DbAdapter
 
     private function get($key)
     {
-        $key = mb_strtolower($key);
+        $key = mb_strtolower(
+            preg_replace('/\B([A-Z])/', '_$1', $key)
+        );
         if (isset($this->recordData[$key]))
             return $this->recordData[$key]['value'];
 
