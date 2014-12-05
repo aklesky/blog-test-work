@@ -8,7 +8,7 @@ use app\code\Controller;
  * Class Blogs
  *
  * @package App\Code\Controllers
- * @route /blogs
+ * @route /blog
  */
 class Blogs extends Controller
 {
@@ -41,8 +41,11 @@ class Blogs extends Controller
  </url></urlset>');
     }
 
-    public function registration()
+    /**
+     * @route /(add|edit)/post
+     */
+    public function addPost()
     {
-        $this->renderResponse();
+        $this->renderResponse('edit_posts');
     }
 } 

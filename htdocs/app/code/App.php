@@ -116,7 +116,7 @@ class App extends Object
         return self::getMedia() . 'css' . DS . $filename;
     }
 
-    public static function getJs()
+    public static function getJs($filename = null)
     {
         if (empty($filename))
             return null;

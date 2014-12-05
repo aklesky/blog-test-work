@@ -10,7 +10,7 @@ class Router extends Object
     protected function match($path, $controller)
     {
         foreach ($controller['routes'] as $action) {
-            if (preg_match("#^{$action['pattern']}$#i", $path, $match)) {
+            if (preg_match("#^{$action['pattern']}(?:\/?)(?:\?(.*)+?)?$#", $path, $match)) {
                 unset($match[0]);
                 $action['segments'] = $match;
 
@@ -29,7 +29,6 @@ class Router extends Object
     {
         if ($this->getRoutes() == null)
             return null;
-
         foreach ($this->getRoutes() as $controller) {
             if (($match = $this->match($path, $controller)) !== false) {
                 return $match;
