@@ -46,10 +46,7 @@ class Blogs extends Controller
      */
     public function addPost()
     {
-        if($this->request->isPost()){
-            echo '<pre>';
-            print_r($this->request->getPost());
-        }
+
         $this->renderResponse('edit_post');
     }
 
@@ -58,6 +55,18 @@ class Blogs extends Controller
      */
     public function testPost()
     {
+        $model = $this->getModel('BlogPosts');
 
+        if($this->request->isPost()){
+            echo '<pre>';
+            print_r($this->request->getPost());
+
+            $post = $model->create();
+
+
+            $post->setData($this->request->getPost());
+            $post->save();
+            print_r($post);
+        }
     }
 } 

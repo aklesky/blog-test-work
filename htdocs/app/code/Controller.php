@@ -58,9 +58,15 @@ class Controller extends Object
         $this->response->XmlResponse($data);
     }
 
-    protected function getModel()
+    /**
+     * @param null $model
+     * @return null| ModelAdapter
+     */
+    protected function getModel($model = null)
     {
-        $this->model = App::getModel($this::getName());
+        if($model != null) return App::getModel($model);
+
+        return $this->model = App::getModel($this::getName());
     }
 
     /**

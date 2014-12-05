@@ -3,7 +3,7 @@
 
 namespace App\Code;
 
-class Object extends \SplObjectStorage
+abstract class Object extends \SplObjectStorage
 {
     /**
      * @param $key
@@ -31,7 +31,7 @@ class Object extends \SplObjectStorage
      * @param $arrayName
      * @return $this
      */
-    protected function setData($data, $arrayName)
+    protected function setArrayData($data, $arrayName)
     {
         if (isset($this->$arrayName)) {
             $this->$arrayName = array_merge($this->$arrayName, $data);
@@ -64,5 +64,12 @@ class Object extends \SplObjectStorage
         $array = explode('\\', get_called_class());
 
         return end($array);
+    }
+
+    public static function capitalsToUnderscore($string = null)
+    {
+        return mb_strtolower(
+            preg_replace('/\B([A-Z])/', '_$1', $string)
+        );
     }
 } 

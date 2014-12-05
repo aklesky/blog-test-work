@@ -1,5 +1,6 @@
 <?php
 namespace App\Code\Controllers;
+
 use app\code\Controller;
 
 /**
@@ -8,7 +9,6 @@ use app\code\Controller;
  * @package App\Code\Controllers
  * @route /user
  */
-
 class Users extends Controller
 {
 
@@ -21,9 +21,15 @@ class Users extends Controller
     }
 
     /**
-     * @route /add(:?)
+     * @route /add
      */
-    public function add(){
+    public function add()
+    {
+
+        if($this->request->isAjaxRequest() && $this->request->isPost()) {
+            $user = $this->model->create();
+            $user->addUser($this->request->getPost());
+        }
 
     }
 
@@ -36,4 +42,5 @@ class Users extends Controller
         $this->renderResponse();
     }
 }
+
 ?>

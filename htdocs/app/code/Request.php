@@ -62,7 +62,7 @@ class Request extends Object
      */
     public function setPost($data = array())
     {
-        return $this->setData($data, '_post');
+        return $this->setArrayData($data, '_post');
     }
 
     public function getQuery($key = null)
@@ -76,7 +76,7 @@ class Request extends Object
      */
     public function setQuery($data = array())
     {
-        return $this->setData($data, '_query');
+        return $this->setArrayData($data, '_query');
     }
 
     /**

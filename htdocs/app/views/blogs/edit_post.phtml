@@ -1,5 +1,5 @@
 <form class="form-horizontal" action="<?php echo $this->getUrl('blog/post/add');?>" method="post" role="form">
-    <input type="hidden" name="BlogId" id="blog_id" value=""/>
+    <input type="hidden" name="BlogId" id="blog_id" value="1"/>
     <div class="form-group">
         <label for="post_title" class="col-sm-4 control-label text-left">Post Title</label>
         <div class="col-sm-8">
@@ -7,9 +7,15 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="post_url" class="col-sm-4 control-label text-left">Post Url</label>
+        <label for="post_url" class="col-sm-4 control-label text-left">Canonical Url</label>
         <div class="col-sm-8">
             <input type="url" class="form-control" name="PostUrl" id="post_url" placeholder="Post url">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="post_slug_tag" class="col-sm-4 control-label text-left">Slug Tag</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" name="PostSlugTag" id="post_slug_tag" placeholder="Slug Tag">
         </div>
     </div>
     <div class="form-group">

@@ -4,7 +4,7 @@ namespace App\Code;
 
 use App\Code\Interfaces\DbAdapter;
 
-class ModelAdapter implements DbAdapter
+class ModelAdapter extends Object implements DbAdapter
 {
 
     const SET = 'set';
@@ -30,7 +30,7 @@ class ModelAdapter implements DbAdapter
         $database = Database::getInstance();
         $this->dbAdapter = $database->getAdapter();
         $this->model = new \ReflectionClass($this);
-        $this->tableName = mb_strtolower($this->model->getShortName());
+        $this->tableName = $this->capitalsToUnderscore($this->model->getShortName());
     }
 
     public function __set($key, $value)
@@ -64,9 +64,7 @@ class ModelAdapter implements DbAdapter
 
     private function get($key)
     {
-        $key = mb_strtolower(
-            preg_replace('/\B([A-Z])/', '_$1', $key)
-        );
+        $key = $this->capitalsToUnderscore($key);
         if (isset($this->recordData[$key]))
             return $this->recordData[$key]['value'];
 
@@ -75,7 +73,8 @@ class ModelAdapter implements DbAdapter
 
     public function set($key, $value)
     {
-        $key = mb_strtolower($key);
+
+        $key = $this->capitalsToUnderscore($key);
         if (isset($this->recordData[$key])) {
             $this->recordData[$key]['original'] = $this->get($key);
             $this->recordData[$key]['value'] = $value;
@@ -102,7 +101,7 @@ class ModelAdapter implements DbAdapter
         if ($statement->execute()) {
             $fields = array();
             while ($record = $statement->fetch()) {
-                $fields[] = $record['Field'];
+                $fields[$record['Field']] = $record['Type'];
             }
 
             return $fields;
@@ -118,8 +117,9 @@ class ModelAdapter implements DbAdapter
     {
         if (($fields = $this->getTableColumns())) {
             $object = new static();
-            foreach ($fields as $field) {
-                $object->$field = null;
+            foreach ($fields as $field => $type) {
+                $object->$field = ($type == 'datetime') ?
+                    date('Y-d-m H:i:s') : null;
             }
 
             return $object;
@@ -144,7 +144,8 @@ class ModelAdapter implements DbAdapter
     {
         $updateData = array();
         foreach ($this->recordData as $record) {
-            $updateData[] = "`{$record['fieldName']}`='{$record['value']}'";
+            $record['value'] = $this->dbAdapter->quote($record['value']);
+            $updateData[] = "`{$record['fieldName']}`={$record['value']}";
         }
 
         $prepare = $this->dbAdapter->prepare(
@@ -165,12 +166,13 @@ class ModelAdapter implements DbAdapter
 
         foreach ($this->recordData as $record) {
             $fields[] = $record['fieldName'];
-            $values[] = $record['value'];
+            $values[] = $this->dbAdapter->quote($record['value']);
         }
         $prepare = $this->dbAdapter->prepare(
             "insert into `{$this->tableName}` (`" . implode('`,`', $fields) . "`) values " .
-            "('" . implode("','", $values) . "')"
+            "(" . implode(",", $values) . ")"
         );
+
         if (!$prepare->execute())
             return false;
 
@@ -243,5 +245,16 @@ class ModelAdapter implements DbAdapter
         }
 
         return null;
+    }
+
+    public function setData($array = null)
+    {
+        if (empty($array))
+            return false;
+        foreach ($array as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        return true;
     }
 }
