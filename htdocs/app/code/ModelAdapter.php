@@ -24,6 +24,8 @@ class ModelAdapter extends Object implements DbAdapter
 
     protected $id;
 
+    protected $errorMessage;
+
     public function __construct()
     {
         /** @var Database $database */
@@ -83,16 +85,22 @@ class ModelAdapter extends Object implements DbAdapter
         return $this;
     }
 
-    public function getId()
+    /**
+     * @return bool|ModelAdapter
+     */
+    public function create()
     {
-        return $this->id;
-    }
+        if (($fields = $this->getTableColumns())) {
+            $object = new static();
+            foreach ($fields as $field => $type) {
+                $object->$field = ($type == 'datetime') ?
+                    date('Y-d-m H:i:s') : null;
+            }
 
-    private function setId($id)
-    {
-        $this->id = $id;
+            return $object;
+        }
 
-        return $this;
+        return false;
     }
 
     public function getTableColumns()
@@ -111,24 +119,6 @@ class ModelAdapter extends Object implements DbAdapter
     }
 
     /**
-     * @return static
-     */
-    public function create()
-    {
-        if (($fields = $this->getTableColumns())) {
-            $object = new static();
-            foreach ($fields as $field => $type) {
-                $object->$field = ($type == 'datetime') ?
-                    date('Y-d-m H:i:s') : null;
-            }
-
-            return $object;
-        }
-
-        return false;
-    }
-
-    /**
      * @return $this|ModelAdapter|bool
      */
     public function save()
@@ -138,6 +128,11 @@ class ModelAdapter extends Object implements DbAdapter
         }
 
         return $this->insert();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     protected function update()
@@ -152,7 +147,7 @@ class ModelAdapter extends Object implements DbAdapter
             "update {$this->tableName} set " . implode(',', $updateData) .
             " where `Id`= :id"
         );
-
+        
         $prepare->bindParam(":id", $this->getId(), \PDO::PARAM_INT);
 
         if (!$prepare->execute())
@@ -178,6 +173,36 @@ class ModelAdapter extends Object implements DbAdapter
 
         $object = $this->selectById($this->dbAdapter->lastInsertId());
         $this->setId($object->getId());
+
+        return $this;
+    }
+
+    public function selectById($id = null)
+    {
+        if (empty($id))
+            return false;
+
+        return $this->selectOneBy('id', $id);
+    }
+
+    public function selectOneBy($field, $value)
+    {
+        if (empty($field) || empty($value))
+            return false;
+
+        $prepare = $this->dbAdapter->prepare(
+            "select * from `{$this->tableName}` where `{$field}` = :value"
+        );
+        $prepare->bindParam(':value', $value);
+        if ($prepare->execute())
+            return $prepare->fetchObject($this->model->getName());
+
+        return false;
+    }
+
+    private function setId($id)
+    {
+        $this->id = $id;
 
         return $this;
     }
@@ -214,21 +239,6 @@ class ModelAdapter extends Object implements DbAdapter
         return false;
     }
 
-    public function selectById($id = null)
-    {
-        if (empty($id))
-            return false;
-
-        $prepare = $this->dbAdapter->prepare(
-            "select * from `{$this->tableName}` where Id = :id"
-        );
-        $prepare->bindParam(':id', $id, \PDO::PARAM_INT);
-        if ($prepare->execute())
-            return $prepare->fetchObject($this->model->getName());
-
-        return false;
-    }
-
     public function selectAll()
     {
         $prepare = $this->dbAdapter->prepare(
@@ -256,5 +266,21 @@ class ModelAdapter extends Object implements DbAdapter
         }
 
         return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * @param mixed $errorMessage
+     */
+    public function setErrorMessage($errorMessage)
+    {
+        $this->errorMessage = $errorMessage;
     }
 }

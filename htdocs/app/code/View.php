@@ -32,14 +32,14 @@ class View extends Object
         }
     }
 
-    public function __set($key, $var)
+    public function setViewDirectory($viewsDirectory = null)
     {
-        $this->varsCollection[$key] = $var;
-    }
+        if (!is_dir($viewsDirectory) && is_readable($viewsDirectory))
+            return false;
 
-    public function __get($key)
-    {
-        return $this->varsCollection[$key];
+        $this->viewDirectory = rtrim($viewsDirectory . DS);
+
+        return $this;
     }
 
     public function setLayoutFile($layout = null)
@@ -52,14 +52,14 @@ class View extends Object
         return $this;
     }
 
-    public function setViewDirectory($viewsDirectory = null)
+    public function __get($key)
     {
-        if (!is_dir($viewsDirectory) && is_readable($viewsDirectory))
-            return false;
+        return $this->varsCollection[$key];
+    }
 
-        $this->viewDirectory = rtrim($viewsDirectory . DS);
-
-        return $this;
+    public function __set($key, $var)
+    {
+        $this->varsCollection[$key] = $var;
     }
 
     public function setView($view = null, $directory = null)
@@ -67,7 +67,7 @@ class View extends Object
         if (empty($view))
             return $this;
 
-        $view = preg_replace("/{$this->defaultExtension}$/",'',$view);
+        $view = preg_replace("/{$this->defaultExtension}$/", '', $view);
 
         $directory = !empty($directory) ? mb_strtolower($directory) . DS : null;
 
@@ -104,17 +104,14 @@ class View extends Object
         return (string)$content;
     }
 
-    public static function getCurrentUrl() {
+    public static function getCurrentUrl()
+    {
         return Request::getInstance()->getCurrentUrl();
     }
 
-    public static function getUrl($path) {
-        return Request::getInstance()->getUrl($path);
-    }
-
-    public static function getMedia()
+    public static function getUrl($path)
     {
-        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
+        return Request::getInstance()->getUrl($path);
     }
 
     public static function getCss($filename = null)
@@ -123,6 +120,11 @@ class View extends Object
             return null;
 
         return self::getMedia() . 'css' . DS . $filename;
+    }
+
+    public static function getMedia()
+    {
+        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
     }
 
     public static function getJs($filename = null)

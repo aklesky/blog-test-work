@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Code\Controllers;
+
 use app\code\Controller;
 
 /**
@@ -9,13 +10,12 @@ use app\code\Controller;
  * @package App\Code\Controllers
  * @route /
  */
-
 class Index extends Controller
 {
     /**
-     * @route /
+     * @route /sitemap.xml
      */
-    public function index()
+    public function sitemap()
     {
     }
 }

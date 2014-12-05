@@ -5,6 +5,39 @@ namespace App\Code;
 
 abstract class Object extends \SplObjectStorage
 {
+    static public function getInstance()
+    {
+        static $instance;
+
+        $class = self::getClass();
+
+        if (!($instance instanceof $class)) {
+            $reflection = new \ReflectionClass($class);
+            $instance = $reflection->newInstanceArgs(func_get_args());
+        }
+
+        return $instance;
+    }
+
+    static public function getClass()
+    {
+        return get_called_class();
+    }
+
+    static public function getName()
+    {
+        $array = explode('\\', get_called_class());
+
+        return end($array);
+    }
+
+    public static function capitalsToUnderscore($string = null)
+    {
+        return mb_strtolower(
+            preg_replace('/\B([A-Z])/', '_$1', $string)
+        );
+    }
+
     /**
      * @param $key
      * @param $request
@@ -38,38 +71,5 @@ abstract class Object extends \SplObjectStorage
         }
 
         return $this;
-    }
-
-    static public function getInstance()
-    {
-        static $instance;
-
-        $class = self::getClass();
-
-        if (!($instance instanceof $class)) {
-            $reflection = new \ReflectionClass($class);
-            $instance = $reflection->newInstanceArgs(func_get_args());
-        }
-
-        return $instance;
-    }
-
-    static public function getClass()
-    {
-        return get_called_class();
-    }
-
-    static public function getName()
-    {
-        $array = explode('\\', get_called_class());
-
-        return end($array);
-    }
-
-    public static function capitalsToUnderscore($string = null)
-    {
-        return mb_strtolower(
-            preg_replace('/\B([A-Z])/', '_$1', $string)
-        );
     }
 } 

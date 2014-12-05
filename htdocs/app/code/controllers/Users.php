@@ -13,24 +13,69 @@ class Users extends Controller
 {
 
     /**
-     * @route /
-     */
-    public function index()
-    {
-        echo "Users";
-    }
-
-    /**
-     * @route /add
+     * @route /register
      */
     public function add()
     {
 
-        if($this->request->isAjaxRequest() && $this->request->isPost()) {
+        if ($this->request->isAjaxPost()) {
             $user = $this->model->create();
-            $user->addUser($this->request->getPost());
+            if ($user->addUser($this->request->getPost())) {
+            }
         }
+    }
 
+    /**
+     * @route /edit(?:/(.*)?)?
+     */
+    public function edit()
+    {
+        $id = 8;
+        if (!($user = $this->model->selectById($id)))
+            $this->response->Redirect('/blog/new/post');
+        $this->editable = $user;
+        $this->renderResponse();
+    }
+
+    /**
+     * @route /save
+     */
+    public function save()
+    {
+        if ($this->request->isAjaxPost()) {
+            $id = 8;
+            if (!($user = $this->model->selectById($id))) {
+                $this->response->JsonResponse(
+                    $this->model->getErrorMessage()
+                );
+
+                return;
+            }
+            $user->updateUser($this->request->getPost());
+            $this->response->JsonResponse();
+        }
+    }
+
+    /**
+     * @route /login
+     */
+    public function login()
+    {
+        if ($this->request->isAjaxPost()) {
+            if (!($user = $this->model->validateUser(
+                $this->request->getPost('email'),
+                $this->request->getPost('password')
+            ))
+            ) {
+                $this->response->JsonResponse(
+                    $this->model->getErrorMessage()
+                );
+
+                return;
+            }
+
+            $this->response->JsonResponse();
+        }
     }
 
     /**

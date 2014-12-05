@@ -21,52 +21,84 @@ class Blogs extends Controller
     }
 
     /**
-     * @route /sitemap.xml
+     * @route /(new|edit)/post(?:/([0-9\-]+)?)?
      */
-    public function sitemap()
+    public function editPost($action = null, $id = null)
     {
-        /**
-         * sitemap template
-         */
-        $this->renderXmlResponse('<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0">
- <url>
-  <loc>http://www.google.com/</loc>
-  <priority>1.000</priority>
- </url>
- <url>
-  <loc>http://www.google.com/3dwh_dmca.html</loc>
-  <priority>0.5000</priority>
- </url></urlset>');
-    }
-
-    /**
-     * @route /(add|edit)/post
-     */
-    public function addPost()
-    {
-
+        if ($action == 'edit') {
+            $postModel = $this->getModel('BlogPosts');
+            if (!($this->editable = $postModel->selectById($id))) {
+                $this->response->Redirect(
+                    $this->request->getUrl('blog/new/post')
+                );
+            }
+        }
         $this->renderResponse('edit_post');
     }
 
     /**
-     * @route /post/add
+     * @route /(new|edit)(?:/([0-9\-]+)?)?
      */
-    public function testPost()
+
+    public function editBlog($action = null, $id = null)
     {
-        $model = $this->getModel('BlogPosts');
+        {
+            if ($action == 'edit') {
+                if (!($this->editable = $this->model->selectById($id))) {
+                    $this->response->Redirect(
+                        $this->request->getUrl('blog/new/blog')
+                    );
+                }
+            }
+        }
+        $this->renderResponse('edit_blog');
+    }
 
-        if($this->request->isPost()){
-            echo '<pre>';
-            print_r($this->request->getPost());
+    /**
+     * @route /save
+     */
+    public function saveBlog()
+    {
+        if ($this->request->isAjaxPost()) {
 
-            $post = $model->create();
+            $data = $this->request->getPost();
 
+            $id = $this->request->getPost('id');
 
-            $post->setData($this->request->getPost());
-            $post->save();
-            print_r($post);
+            if (!($blog = $this->model->selectById($id))) {
+                $blog = $this->model->create();
+            }
+            $blog->setData($data);
+            if (!$blog->save()) {
+                $this->response->JsonResponse($blog->getErrorMessage());
+            } else {
+                $this->response->JsonResponse();
+            }
+        }
+    }
+
+    /**
+     * @route /save/post
+     */
+    public function savePost()
+    {
+        if ($this->request->isAjaxPost()) {
+            $model = $this->getModel('BlogPosts');
+
+            $data = $this->request->getPost();
+
+            $id = $this->request->getPost('id');
+
+            if (!($post = $model->selectById($id))) {
+                $post = $model->create();
+            }
+
+            $post->setData($data);
+            if (!$post->save()) {
+                $this->response->JsonResponse($post->getErrorMessage());
+            } else {
+                $this->response->JsonResponse();
+            }
         }
     }
 } 

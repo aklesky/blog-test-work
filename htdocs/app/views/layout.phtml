@@ -22,7 +22,7 @@
 <div class="blog-masthead">
     <div class="container">
         <nav class="blog-nav">
-            <a class="blog-nav-item active" href="#">Aleksey Semiglasov - Blog</a>
+            <a class="blog-nav-item active" href="#">Aklesky's - Blog</a>
         </nav>
     </div>
 </div>
@@ -47,23 +47,22 @@
 
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
             <div class="sidebar-module sidebar-module-inset">
-                <form role="form" method="post" action="">
-                    <h4>Login</h4>
+                <form role="form" method="post" action="<?php echo $this->getUrl('user/login'); ?>">
+                    <h5>LOGIN</h5>
 
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
+                        <label for="login_email">Email address</label>
                         <input type="email" class="form-control"
-                               id="exampleInputEmail1"
+                               id="login_email" name="email"
                                placeholder="Enter email">
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
+                        <label for="login_password">Password</label>
                         <input type="password" class="form-control"
-                               id="exampleInputPassword1"
-                               placeholder="Password">
+                               id="login_password" name="password"
+                               placeholder="Enter Password">
                     </div>
-                    <button type="submit" class="btn btn-default">Submit
-                    </button>
+                    <button type="submit" class="btn btn-default">Submit</button>
                 </form>
             </div>
 

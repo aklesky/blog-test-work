@@ -41,32 +41,21 @@ class Controller extends Object
         $this->getModel();
     }
 
-    protected function renderResponse($view = null)
-    {
-        $this->response->ViewResponse(
-            $this->view->setView($view, self::getName())
-        );
-    }
-
-    public function __set($key, $value)
-    {
-        $this->view->$key = $value;
-    }
-
-    protected function renderXmlResponse($data)
-    {
-        $this->response->XmlResponse($data);
-    }
-
     /**
      * @param null $model
      * @return null| ModelAdapter
      */
     protected function getModel($model = null)
     {
-        if($model != null) return App::getModel($model);
+        if ($model != null)
+            return App::getModel($model);
 
         return $this->model = App::getModel($this::getName());
+    }
+
+    public function __set($key, $value)
+    {
+        $this->view->$key = $value;
     }
 
     /**
@@ -78,6 +67,13 @@ class Controller extends Object
         $this->renderResponse(404);
     }
 
+    protected function renderResponse($view = null)
+    {
+        $this->response->ViewResponse(
+            $this->view->setView($view, self::getName())
+        );
+    }
+
     /**
      * @route /404
      */
@@ -85,5 +81,10 @@ class Controller extends Object
     public function notFound()
     {
         $this->renderResponse(404);
+    }
+
+    protected function renderXmlResponse($data)
+    {
+        $this->response->XmlResponse($data);
     }
 }

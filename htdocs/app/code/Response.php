@@ -27,70 +27,20 @@ class Response extends Object
     private $_status;
 
     /**
-     * @param      $name
-     * @param null $value
-     * @param null $code
-     * @param bool $replace
-     *
+     * @param null $data
+     * @param int $headerCode
      * @return $this
      */
-    function setHeader($name, $value = null, $code = null, $replace = false)
+    public function JsonResponse($data = null, $headerCode = 200)
     {
-        if (!isset($value) && isset($this->_headers[$name])) {
-            unset($this->_headers[$name]);
-        }
-        $this->_headers[$name] = array(
-            "value" => $value, "code" => $code, "replace" => $replace
-        );
+        $this->clearHeaders()
+            ->setHeader("Cache-Control", "no-cache, must-revalidate")
+            ->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT")
+            ->setHeader("Content-Type", "application/json")
+            ->setStatus($headerCode)
+            ->printHeaders();
 
-        return $this;
-    }
-
-    /**
-     * headers alredy sent ?
-     *
-     * @return bool
-     * @throws \Exception
-     */
-    function isHeaderSent()
-    {
-        if (headers_sent($file, $line)) {
-            throw new \Exception("Headers alredy sent in :" . $file . ", line :" . $line, E_WARNING);
-        }
-
-        return false;
-    }
-
-    /**
-     * clear all header or header by key
-     *
-     * @param string $headerKey
-     * @return Response
-     */
-    public function clearHeaders($headerKey = null)
-    {
-        if (!empty($this->_headers[$headerKey])) {
-            unset($this->_headers[$headerKey]);
-            header_remove($headerKey);
-
-            return $this;
-        }
-        $this->_headers = array();
-
-        return $this;
-    }
-
-    /**
-     * set respone code;
-     *
-     * @param $codeNumber
-     * @return Response
-     */
-    function setStatus($codeNumber)
-    {
-        if (!empty($this->_statusArray[$codeNumber])) {
-            $this->_status = (int)$codeNumber;
-        }
+        echo !empty($data) ? json_encode($data) : json_encode(array());
 
         return $this;
     }
@@ -120,20 +70,70 @@ class Response extends Object
     }
 
     /**
-     * @param null $data
-     * @param int $headerCode
+     * headers alredy sent ?
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    function isHeaderSent()
+    {
+        if (headers_sent($file, $line)) {
+            throw new \Exception("Headers alredy sent in :" . $file . ", line :" . $line, E_WARNING);
+        }
+
+        return false;
+    }
+
+    /**
+     * set respone code;
+     *
+     * @param $codeNumber
+     * @return Response
+     */
+    function setStatus($codeNumber)
+    {
+        if (!empty($this->_statusArray[$codeNumber])) {
+            $this->_status = (int)$codeNumber;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param      $name
+     * @param null $value
+     * @param null $code
+     * @param bool $replace
+     *
      * @return $this
      */
-    public function JsonResponse($data = null, $headerCode = 200)
+    function setHeader($name, $value = null, $code = null, $replace = false)
     {
-        $this->clearHeaders()
-            ->setHeader("Cache-Control", "no-cache, must-revalidate")
-            ->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT")
-            ->setHeader("Content-Type", "application/json")
-            ->setStatus($headerCode)
-            ->printHeaders();
+        if (!isset($value) && isset($this->_headers[$name])) {
+            unset($this->_headers[$name]);
+        }
+        $this->_headers[$name] = array(
+            "value" => $value, "code" => $code, "replace" => $replace
+        );
 
-        echo !empty($data) ? json_encode($data) : json_encode(array());
+        return $this;
+    }
+
+    /**
+     * clear all header or header by key
+     *
+     * @param string $headerKey
+     * @return Response
+     */
+    public function clearHeaders($headerKey = null)
+    {
+        if (!empty($this->_headers[$headerKey])) {
+            unset($this->_headers[$headerKey]);
+            header_remove($headerKey);
+
+            return $this;
+        }
+        $this->_headers = array();
 
         return $this;
     }

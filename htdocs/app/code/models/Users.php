@@ -21,18 +21,32 @@ class Users extends ModelAdapter
     public function addUser(array $data = array())
     {
         $this->setData($data);
-        $password = $this->getPassword();
-        $this->setPassword($this->createHash($password));
-        $this->save();
+        if (!$this->selectByEmail($this->getEmail())) {
+            $password = $this->getPassword();
+            $this->setPassword($this->createHash($password));
+
+            return $this->save();
+        }
+
+        return false;
     }
 
-    private function createHash($password = null)
+    public function selectByEmail($email = null)
+    {
+        if (empty($email))
+            return null;
+
+        return $this->selectOneBy('email', $email);
+    }
+
+    protected function createHash($password = null)
     {
         $passwordSalt = base64_encode(
             mcrypt_create_iv(self::PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM)
         );
 
-        return self::PBKDF2_HASH_ALGORITHM . ":" . self::PBKDF2_ITERATIONS . ":" . $passwordSalt . ":" .
+        return self::PBKDF2_HASH_ALGORITHM . ":"
+        . self::PBKDF2_ITERATIONS . ":" . $passwordSalt . ":" .
         base64_encode(
             $this->pbkdf2(
                 self::PBKDF2_HASH_ALGORITHM,
@@ -79,22 +93,39 @@ class Users extends ModelAdapter
             return bin2hex(substr($output, 0, $keyLength));
     }
 
-    protected function passwordCompare($actual, $expected)
+    public function updateUser(array $data = array())
     {
-        $diff = mb_strlen($actual) ^ mb_strlen($expected);
-        for($i = 0; $i < strlen($actual) && $i < mb_strlen($expected); $i++)
-        {
-            $diff |= ord($actual[$i]) ^ ord($expected[$i]);
+        if (!empty($data['password'])) {
+            $data['password'] = $this->createHash($data['password']);
+        } else {
+            unset($data['password']);
         }
-        return $diff === 0;
+
+        $this->setData($data);
+
+        return $this->save();
+    }
+
+    public function validateUser($email, $password)
+    {
+        if (!($user = $this->selectByEmail($email)) ||
+            !$this->validatePassword($password, $user->getPassword())
+        ) {
+            $this->setErrorMessage('Username or password is incorrect!');
+
+            return false;
+        }
+
+        return $user;
     }
 
     protected function validatePassword($password, $correctHash)
     {
         $params = explode(":", $correctHash);
-        if(count($params) < self::HASH_SECTIONS)
+        if (count($params) < self::HASH_SECTIONS)
             return false;
         $pbkdf2 = base64_decode($params[self::HASH_PBKDF2_INDEX]);
+
         return $this->passwordCompare(
             $pbkdf2,
             $this->pbkdf2(
@@ -106,5 +137,15 @@ class Users extends ModelAdapter
                 true
             )
         );
+    }
+
+    protected function passwordCompare($actual, $expected)
+    {
+        $diff = mb_strlen($actual) ^ mb_strlen($expected);
+        for ($i = 0; $i < strlen($actual) && $i < mb_strlen($expected); $i++) {
+            $diff |= ord($actual[$i]) ^ ord($expected[$i]);
+        }
+
+        return $diff === 0;
     }
 }

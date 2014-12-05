@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 use App\Code\App;
 

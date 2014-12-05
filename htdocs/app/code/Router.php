@@ -7,20 +7,6 @@ class Router extends Object
 
     protected $routeList;
 
-    protected function match($path, $controller)
-    {
-        foreach ($controller['routes'] as $action) {
-            if (preg_match("#^{$action['pattern']}(?:\/?)(?:\?(.*)+?)?$#", $path, $match)) {
-                unset($match[0]);
-                $action['segments'] = $match;
-
-                return $action;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @param $path
      * @return bool|null
@@ -41,6 +27,20 @@ class Router extends Object
     public function getRoutes()
     {
         return $this->routeList;
+    }
+
+    protected function match($path, $controller)
+    {
+        foreach ($controller['routes'] as $action) {
+            if (preg_match("#^{$action['pattern']}(?:\/?)(?:\?(.*)+?)?$#", $path, $match)) {
+                unset($match[0]);
+                $action['segments'] = $match;
+
+                return $action;
+            }
+        }
+
+        return false;
     }
 
     public function scanRoutes($directoryToScan)
@@ -95,11 +95,6 @@ class Router extends Object
         }
     }
 
-    private function _isMethodAllowed(\ReflectionMethod $method) {
-        return $method->isPublic() && !$method->isStatic()
-        && $method->isUserDefined() && !$method->isConstructor();
-    }
-
     private function _getRoutePattern(\Reflector $reflector, $base = null)
     {
         $pattern = $this->_getRoutePatternBlock($reflector->getDocComment());
@@ -118,5 +113,11 @@ class Router extends Object
         }
 
         return null;
+    }
+
+    private function _isMethodAllowed(\ReflectionMethod $method)
+    {
+        return $method->isPublic() && !$method->isStatic()
+        && $method->isUserDefined() && !$method->isConstructor();
     }
 } 

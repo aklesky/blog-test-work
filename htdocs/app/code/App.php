@@ -38,6 +38,31 @@ class App extends Object
         $this->config = $config;
     }
 
+    public static function run(
+        $controllersDirectory,
+        $modelDirectory,
+        $viewsDirectory,
+        $config)
+    {
+        $instance = parent::getInstance(
+            $controllersDirectory,
+            $modelDirectory,
+            $viewsDirectory,
+            $config);
+        $instance->setUp();
+    }
+
+    public static function getModel($model)
+    {
+        try {
+            $reflection = new \ReflectionClass(ModelsNameSpace . $model);
+
+            return $reflection->newInstance();
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+    }
+
     protected function setUp()
     {
         $this->request = Request::getInstance();
@@ -87,30 +112,5 @@ class App extends Object
         }
 
         return null;
-    }
-
-    public static function run(
-        $controllersDirectory,
-        $modelDirectory,
-        $viewsDirectory,
-        $config)
-    {
-        $instance = parent::getInstance(
-            $controllersDirectory,
-            $modelDirectory,
-            $viewsDirectory,
-            $config);
-        $instance->setUp();
-    }
-
-
-    public static function getModel($model)
-    {
-        try {
-            $reflection = new \ReflectionClass(ModelsNameSpace . $model);
-            return $reflection->newInstance();
-        } catch (\ReflectionException $e) {
-            return null;
-        }
     }
 } 
