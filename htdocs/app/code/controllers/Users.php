@@ -6,7 +6,7 @@ use app\code\Controller;
  * Class Users
  *
  * @package App\Code\Controllers
- * @route /users
+ * @route /user
  */
 
 class Users extends Controller
@@ -25,6 +25,15 @@ class Users extends Controller
      */
     public function add(){
 
+    }
+
+    /**
+     * @route /registration
+     */
+
+    public function registration()
+    {
+        $this->renderResponse();
     }
 }
 ?>

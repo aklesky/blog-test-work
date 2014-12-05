@@ -40,4 +40,9 @@ class Blogs extends Controller
   <priority>0.5000</priority>
  </url></urlset>');
     }
+
+    public function registration()
+    {
+        $this->renderResponse();
+    }
 } 

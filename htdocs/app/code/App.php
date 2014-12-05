@@ -126,8 +126,11 @@ class App extends Object
 
     public static function getModel($model)
     {
-        $reflection = new \ReflectionClass(ModelsNameSpace . $model);
-
-        return $reflection->newInstance();
+        try {
+            $reflection = new \ReflectionClass(ModelsNameSpace . $model);
+            return $reflection->newInstance();
+        } catch (\ReflectionException $e) {
+            return null;
+        }
     }
 } 
