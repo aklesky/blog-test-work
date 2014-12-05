@@ -67,9 +67,12 @@ class View extends Object
         if (empty($view))
             return $this;
 
+        $view = preg_replace("/{$this->defaultExtension}$/",'',$view);
+
+        $directory = !empty($directory) ? mb_strtolower($directory) . DS : null;
+
         $this->view = $this->viewDirectory .
-            (!empty($directory) ? $directory . DS : null) .
-            trim($view, $this->defaultExtension) .
+            $directory . $view .
             $this->defaultExtension;
 
         return $this;
@@ -99,5 +102,34 @@ class View extends Object
         ob_get_clean();
 
         return (string)$content;
+    }
+
+    public static function getCurrentUrl() {
+        return Request::getInstance()->getCurrentUrl();
+    }
+
+    public static function getUrl($path) {
+        return Request::getInstance()->getUrl($path);
+    }
+
+    public static function getMedia()
+    {
+        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
+    }
+
+    public static function getCss($filename = null)
+    {
+        if (empty($filename))
+            return null;
+
+        return self::getMedia() . 'css' . DS . $filename;
+    }
+
+    public static function getJs($filename = null)
+    {
+        if (empty($filename))
+            return null;
+
+        return self::getMedia() . 'js' . DS . $filename;
     }
 }

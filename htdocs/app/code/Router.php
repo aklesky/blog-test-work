@@ -65,8 +65,7 @@ class Router extends Object
     private function _getControllerRoutes($controllerFileName = null)
     {
         try {
-            // @todo remove NameSpacing
-            $controllerClass = new \ReflectionClass('App\\Code\\Controllers\\' . $controllerFileName);
+            $controllerClass = new \ReflectionClass(ControllersNameSpace . $controllerFileName);
 
             $routeName = array(
                 'name' => $controllerClass->getShortName()

@@ -1,4 +1,5 @@
-<form class="form-horizontal" role="form">
+<form class="form-horizontal" action="<?php echo $this->getUrl('blog/post/add');?>" method="post" role="form">
+    <input type="hidden" name="BlogId" id="blog_id" value=""/>
     <div class="form-group">
         <label for="post_title" class="col-sm-4 control-label text-left">Post Title</label>
         <div class="col-sm-8">
@@ -23,7 +24,7 @@
         </div>
     </div>
 </form>
-<script type="text/javascript" src="<?php echo \App\Code\App::getJs('tinymce/tinymce.min.js')?>"></script>
+<script type="text/javascript" src="<?php echo $this->getJs('tinymce/tinymce.min.js')?>"></script>
 <script type="text/javascript">
     tinymce.init({
         selector: "textarea",

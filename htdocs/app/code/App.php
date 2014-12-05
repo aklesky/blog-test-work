@@ -103,26 +103,6 @@ class App extends Object
         $instance->setUp();
     }
 
-    public static function getMedia()
-    {
-        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
-    }
-
-    public static function getCss($filename = null)
-    {
-        if (empty($filename))
-            return null;
-
-        return self::getMedia() . 'css' . DS . $filename;
-    }
-
-    public static function getJs($filename = null)
-    {
-        if (empty($filename))
-            return null;
-
-        return self::getMedia() . 'js' . DS . $filename;
-    }
 
     public static function getModel($model)
     {

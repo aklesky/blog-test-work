@@ -51,6 +51,11 @@ class Request extends Object
         return isset($key) ? $this->getData($key, '_post') : $this->_post;
     }
 
+    public function isPost()
+    {
+        return count($this->getPost()) > 0;
+    }
+
     /**
      * @param array $data
      * @return Request
@@ -122,6 +127,27 @@ class Request extends Object
     {
         return '//' . $this->getHeader('HTTP_HOST') . DS .
         ltrim($this->getBasePath(), DS);
+    }
+
+    public function getUrl($path = null)
+    {
+        return $this->getBaseUrl() . $path;
+    }
+
+    public function getBaseUrl()
+    {
+        return $this->getBaseHost() . $this->getBasePath();
+    }
+
+    public function getCurrentUrl()
+    {
+        return $this->getBaseHost() . $this->getRequestPath();
+    }
+
+    public function getBaseHost()
+    {
+        return ($this->isHeaderExists('HTTPS') ? "https://" : "http://") .
+        $this->getHeader('HTTP_HOST') . DS;
     }
 
     public function getRequestPath()

@@ -1,7 +1,3 @@
-<?php
-namespace App\Code;
-/** @var $this View */
-?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -16,7 +12,7 @@ namespace App\Code;
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
-    <link rel="stylesheet" href="<?php echo App::getCss('blog.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $this::getCss('blog.css'); ?>">
 
     <!-- Latest compiled and minified JavaScript -->
     <script

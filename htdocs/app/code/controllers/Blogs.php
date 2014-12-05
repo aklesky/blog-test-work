@@ -46,6 +46,18 @@ class Blogs extends Controller
      */
     public function addPost()
     {
-        $this->renderResponse('edit_posts');
+        if($this->request->isPost()){
+            echo '<pre>';
+            print_r($this->request->getPost());
+        }
+        $this->renderResponse('edit_post');
+    }
+
+    /**
+     * @route /post/add
+     */
+    public function testPost()
+    {
+
     }
 } 
