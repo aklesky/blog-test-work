@@ -8,7 +8,6 @@ use app\code\User;
 class Session extends AccessLayer
 {
 
-
     public function canAccess()
     {
         if ($this->isAllowedToAll())
@@ -21,8 +20,12 @@ class Session extends AccessLayer
     {
         if ($this->isAllow() && User::isOnline()) {
             return true;
+        } else if ($this->isAllow() && !User::isOnline()) {
+            return false;
         } else if ($this->isDisallow() && User::isOnline()) {
             return false;
+        } else if ($this->isDisallow() && !User::isOnline()) {
+            return true;
         }
 
         return false;
@@ -32,7 +35,6 @@ class Session extends AccessLayer
     {
         return $this->getAllow() === mb_strtolower(Session::getName());
     }
-
 
     protected function isDisallow()
     {
