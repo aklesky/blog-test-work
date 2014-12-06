@@ -1,6 +1,7 @@
 <?php
 namespace App\Code\Controllers;
 
+use App\Code\Acl\Session;
 use app\code\Controller;
 
 /**
@@ -34,7 +35,8 @@ class Users extends Controller
      */
     public function edit()
     {
-        $id = 8;
+        $id = $_SESSION[Session::getInstance()->getSessionKey()]['userId'];
+
         if (!($user = $this->model->selectById($id)))
             $this->response->Redirect('/blog/new/post');
         $this->editable = $user;
@@ -49,7 +51,7 @@ class Users extends Controller
     public function save()
     {
         if ($this->request->isAjaxPost()) {
-            $id = 8;
+            $id = $_SESSION[Session::getInstance()->getSessionKey()]['userId'];
             if (!($user = $this->model->selectById($id))) {
                 $this->response->JsonResponse(
                     $this->model->getErrorMessage()
@@ -82,6 +84,8 @@ class Users extends Controller
                 return;
             }
 
+            $sessionKey = Session::getInstance()->getSessionKey();
+            $_SESSION[$sessionKey]['userId'] = $user->getId();
             $this->response->JsonResponse();
         }
     }
@@ -95,6 +99,18 @@ class Users extends Controller
     public function registration()
     {
         $this->renderResponse();
+    }
+
+    /**
+     * @route /logout
+     * @request get
+     * @allow session
+     */
+
+    public function logout()
+    {
+        session_destroy();
+        $this->response->Redirect('/');
     }
 }
 

@@ -182,6 +182,7 @@ class Request extends Object
     public function isRequestAllowed($description = null)
     {
         $methodAllowed = $this->getPatternBlock('request', $description);
+
         return preg_match("/^({$methodAllowed})$/i", $this->getRequestMethod());
     }
 }

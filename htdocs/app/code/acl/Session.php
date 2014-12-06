@@ -9,18 +9,20 @@ class Session extends AccessLayer
 
     protected $sessionKey = 'UserSession';
 
+    /**
+     * @return string
+     */
+    public function getSessionKey()
+    {
+        return $this->sessionKey;
+    }
+
     public function canAccess()
     {
-        if($this->isAllowedToAll())
+        if ($this->isAllowedToAll())
             return true;
 
-        if($this->isAllowed())
-            return true;
-
-        if($this->isDisallowed())
-            return false;
-
-        return false;
+        return $this->isAllowed();
     }
 
     protected function isSessionActive()
@@ -29,16 +31,24 @@ class Session extends AccessLayer
         !empty($_SESSION[$this->sessionKey]['userId']);
     }
 
+    protected function isAllow()
+    {
+        return $this->getAllow() === mb_strtolower(Session::getName());
+    }
+
+    protected function isDisallow()
+    {
+        return $this->getDisallow() === mb_strtolower(Session::getName());
+    }
+
     protected function isAllowed()
     {
-        return $this->getAllow() === mb_strtolower(Session::getName())
-        && $this->isSessionActive();
+        if($this->isAllow() && $this->isSessionActive()) {
+            return true;
+        } else if ($this->isDisallow() && $this->isSessionActive())
+        {
+            return false;
+        }
+        return false;
     }
-
-    protected function isDisallowed()
-    {
-        return $this->getDisallow() === mb_strtolower(Session::getName())
-        && $this->isDisallowed();
-    }
-
-} 
+}

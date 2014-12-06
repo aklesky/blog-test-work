@@ -19,30 +19,38 @@ class AccessLayer extends Object
         return Session::getInstance($description)->canAccess();
     }
 
+    protected function isAllowedToAll()
+    {
+        return $this->getAllow() == null && $this->getDisallow() == null;
+    }
+
     protected function getAllow()
     {
-        if(empty($this->securityDescription))
+        if (empty($this->securityDescription))
             return null;
+
         return $this->getPatternBlock('allow', $this->securityDescription);
     }
 
     protected function getDisallow()
     {
-        if(empty($this->securityDescription))
+        if (empty($this->securityDescription))
             return null;
+
         return $this->getPatternBlock('disallow', $this->securityDescription);
     }
 
-    protected function isAllowedToAll(){
-        return $this->getAllow() == null && $this->getDisallow() == null;
-    }
-
-    protected function isAllowed()
+    protected function isAllow()
     {
         return false;
     }
 
-    protected function isDisallowed()
+    protected function isDisallow()
+    {
+        return false;
+    }
+
+    protected function isAllowed()
     {
         return false;
     }
