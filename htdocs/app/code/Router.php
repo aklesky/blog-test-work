@@ -108,11 +108,7 @@ class Router extends Object
 
     private function _getRoutePatternBlock($commentBlock = null)
     {
-        if (preg_match('/@route\s+(.*)\r?\n/im', $commentBlock, $matches)) {
-            return trim($matches[1], '/');
-        }
-
-        return null;
+        return trim($this->getPatternBlock('route', $commentBlock), DS);
     }
 
     private function _isMethodAllowed(\ReflectionMethod $method)

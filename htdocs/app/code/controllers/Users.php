@@ -14,6 +14,8 @@ class Users extends Controller
 
     /**
      * @route /register
+     * @request post
+     * @disallow session
      */
     public function add()
     {
@@ -27,6 +29,8 @@ class Users extends Controller
 
     /**
      * @route /edit(?:/(.*)?)?
+     * @request get
+     * @allow session
      */
     public function edit()
     {
@@ -39,6 +43,8 @@ class Users extends Controller
 
     /**
      * @route /save
+     * @request post
+     * @allow session
      */
     public function save()
     {
@@ -58,6 +64,8 @@ class Users extends Controller
 
     /**
      * @route /login
+     * @request post
+     * @disallow session
      */
     public function login()
     {
@@ -80,6 +88,8 @@ class Users extends Controller
 
     /**
      * @route /registration
+     * @request get
+     * @disallow session
      */
 
     public function registration()

@@ -15,6 +15,11 @@ class App extends Object
      */
     protected $router;
 
+    /**
+     * @var AccessLayer
+     */
+    protected $accessLevel;
+
     protected $config;
 
     protected $controllersDirectory;
@@ -65,6 +70,7 @@ class App extends Object
 
     protected function setUp()
     {
+        $this->accessLevel = AccessLayer::getInstance();
         $this->request = Request::getInstance();
         $this->router = Router::getInstance();
         $this->router = Router::getInstance();
@@ -103,8 +109,18 @@ class App extends Object
                 View::getInstance()
                     ->setView($action, $reflection->getShortName())
             );
-            $reflection->getMethod($action)
-                ->invokeArgs($instance, $arguments);
+
+            $method = $reflection->getMethod($action);
+
+            $description = $method->getDocComment();
+
+            if (!$this->request->isRequestAllowed($description))
+                return null;
+
+            if (!$this->accessLevel->canAccess($description))
+                return null;
+
+            $method->invokeArgs($instance, $arguments);
         } catch (\LogicException $e) {
             echo $e->getMessage();
         } catch (\ReflectionException $e) {
@@ -113,4 +129,4 @@ class App extends Object
 
         return null;
     }
-} 
+}

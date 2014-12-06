@@ -13,6 +13,9 @@ use app\code\Controller;
 class Blogs extends Controller
 {
 
+    /**
+     * @request get
+     */
     public function index()
     {
         $this->Blogs = $this->model->selectAll();
@@ -22,6 +25,8 @@ class Blogs extends Controller
 
     /**
      * @route /(new|edit)/post(?:/([0-9\-]+)?)?
+     * @request get
+     * @allow session
      */
     public function editPost($action = null, $id = null)
     {
@@ -38,6 +43,8 @@ class Blogs extends Controller
 
     /**
      * @route /(new|edit)(?:/([0-9\-]+)?)?
+     * @request get
+     * @allow session
      */
 
     public function editBlog($action = null, $id = null)
@@ -56,6 +63,8 @@ class Blogs extends Controller
 
     /**
      * @route /save
+     * @request post
+     * @allow session
      */
     public function saveBlog()
     {
@@ -79,6 +88,8 @@ class Blogs extends Controller
 
     /**
      * @route /save/post
+     * @request post
+     * @allow session
      */
     public function savePost()
     {

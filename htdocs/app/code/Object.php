@@ -72,4 +72,14 @@ abstract class Object extends \SplObjectStorage
 
         return $this;
     }
+
+    protected function getPatternBlock($pattern = null, $comment = null)
+    {
+        if (empty($pattern))
+            return null;
+        if (!preg_match("/@{$pattern}\s+(.*)\r?\n/im", $comment, $matches))
+            return null;
+
+        return trim($matches[1]);
+    }
 } 

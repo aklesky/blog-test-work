@@ -14,6 +14,7 @@ class Index extends Controller
 {
     /**
      * @route /sitemap.xml
+     * @request get|post
      */
     public function sitemap()
     {

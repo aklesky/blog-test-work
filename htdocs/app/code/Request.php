@@ -178,4 +178,10 @@ class Request extends Object
 
         return implode('/', array_diff_assoc($requestUri, $scriptName));
     }
+
+    public function isRequestAllowed($description = null)
+    {
+        $methodAllowed = $this->getPatternBlock('request', $description);
+        return preg_match("/^({$methodAllowed})$/i", $this->getRequestMethod());
+    }
 }
