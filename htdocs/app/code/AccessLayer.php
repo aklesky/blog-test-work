@@ -3,8 +3,9 @@
 namespace App\Code;
 
 use App\Code\Acl\Session;
+use App\Code\Interfaces\IAccessLayer;
 
-class AccessLayer extends Object
+class AccessLayer extends Object implements IAccessLayer
 {
 
     protected $securityDescription;

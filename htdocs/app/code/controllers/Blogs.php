@@ -5,9 +5,6 @@ namespace App\Code\Controllers;
 use app\code\Controller;
 
 /**
- * Class Blogs
- *
- * @package App\Code\Controllers
  * @route /blog
  */
 class Blogs extends Controller

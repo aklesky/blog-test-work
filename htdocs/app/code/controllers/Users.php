@@ -3,6 +3,7 @@ namespace App\Code\Controllers;
 
 use App\Code\Acl\Session;
 use app\code\Controller;
+use app\code\User;
 
 /**
  * Class Users
@@ -84,8 +85,7 @@ class Users extends Controller
                 return;
             }
 
-            $sessionKey = Session::getInstance()->getSessionKey();
-            $_SESSION[$sessionKey]['userId'] = $user->getId();
+            User::setUserSession($user->getId());
             $this->response->JsonResponse();
         }
     }

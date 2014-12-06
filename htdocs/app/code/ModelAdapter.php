@@ -2,9 +2,9 @@
 
 namespace App\Code;
 
-use App\Code\Interfaces\DbAdapter;
+use App\Code\Interfaces\IDbAdapter;
 
-class ModelAdapter extends Object implements DbAdapter
+class ModelAdapter extends Object implements IDbAdapter
 {
 
     const SET = 'set';
@@ -147,7 +147,7 @@ class ModelAdapter extends Object implements DbAdapter
             "update {$this->tableName} set " . implode(',', $updateData) .
             " where `Id`= :id"
         );
-        
+
         $prepare->bindParam(":id", $this->getId(), \PDO::PARAM_INT);
 
         if (!$prepare->execute())

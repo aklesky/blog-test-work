@@ -2,7 +2,7 @@
 
 namespace App\Code\Interfaces;
 
-interface DbAdapter
+interface IDbAdapter
 {
     public function selectById($id);
 
