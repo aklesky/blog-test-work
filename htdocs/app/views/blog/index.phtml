@@ -1,0 +1,23 @@
+<?php if($this->collection !== null) : ?>
+    <?php
+        /**
+            @var $post App\Code\Models\Blogs
+         */
+    ?>
+    <?php foreach($this->collection as $post) : ?>
+<div class="blog-post">
+    <h2 class="blog-post-title"><?php echo $post->getPostTitle();?></h2>
+    <p class="blog-post-meta"><?php echo $post->getPostDate();?> by <a href="#"><?php
+            echo $this->user->getUsername();?></a></p>
+    <?php echo $post->getPostText();?>
+</div>
+<?php endforeach;?>
+    <?php else : ?>
+    Blog has no entries.
+<?php endif;?>
+<nav>
+    <ul class="pager">
+        <li><a href="#">Previous</a></li>
+        <li><a href="#">Next</a></li>
+    </ul>
+</nav>

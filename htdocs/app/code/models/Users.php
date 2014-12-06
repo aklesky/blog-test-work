@@ -9,14 +9,24 @@ class Users extends ModelAdapter
 {
 
     const PBKDF2_HASH_ALGORITHM = "sha256";
+
     const PBKDF2_ITERATIONS = 1000;
+
     const PBKDF2_SALT_BYTE_SIZE = 24;
+
     const PBKDF2_HASH_BYTE_SIZE = 24;
+
     const HASH_SECTIONS = 4;
+
     const HASH_ALGORITHM_INDEX = 0;
+
     const HASH_ITERATION_INDEX = 1;
+
     const HASH_SALT_INDEX = 2;
+
     const HASH_PBKDF2_INDEX = 3;
+
+    protected $tableAbbr = 'us';
 
     public function addUser(array $data = array())
     {

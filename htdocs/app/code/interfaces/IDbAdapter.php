@@ -2,6 +2,8 @@
 
 namespace App\Code\Interfaces;
 
+use App\Code\ModelAdapter;
+
 interface IDbAdapter
 {
     public function selectById($id);
@@ -17,4 +19,6 @@ interface IDbAdapter
     public function deleteAll();
 
     public function create();
+
+    public function leftJoin(ModelAdapter $table = null);
 } 

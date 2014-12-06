@@ -72,7 +72,27 @@ use App\Code\User;
                         </button>
                     </form>
                 </div>
-            <?php else : ?><?php endif; ?>
+            <?php else : ?>
+            <div class="sidebar-module sidebar-module-inset">
+                <div class="btn-group-vertical" role="group" aria-label="...">
+                    <div class="dropdown" role="group">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                            Blog management
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/edit');?>">Blog settings</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/new/post');?>">Add post</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/posts');?>">Posts</a></li>
+                        </ul>
+                    </div>
+                    <p class="divider"></p>
+                    <div class="btn-group" role="group">
+                        <a href="<?php echo $this->getUrl('user/edit');?>" class="btn btn-block btn-default">My Account</a>
+                    </div>
+                </div>
+                </div>
+            <?php endif; ?>
         </div>
         <!-- /.blog-sidebar -->
 

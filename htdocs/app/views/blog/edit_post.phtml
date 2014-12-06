@@ -1,3 +1,7 @@
+<?php
+use app\code\User;
+if(User::isOnline()) :
+?>
 <form class="form-horizontal" action="<?php
 echo $this->getUrl('blog/save/post');?>" method="post" role="form">
     <input type="hidden" name="BlogId" id="blog_id" value="<?php
@@ -56,3 +60,4 @@ echo $this->getUrl('blog/save/post');?>" method="post" role="form">
         }
     });
 </script>
+<?php endif;?>

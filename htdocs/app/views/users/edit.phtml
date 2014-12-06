@@ -1,3 +1,7 @@
+<?php
+use app\code\User;
+if(User::isOnline()) :
+?>
 <form class="form-horizontal" action="<?php echo $this->getUrl('user/save');?>" method="post" role="form">
     <div class="form-group">
         <label for="username" class="col-sm-4 control-label text-left">Username</label>
@@ -39,3 +43,4 @@
         </div>
     </div>
 </form>
+<?php endif ;?>

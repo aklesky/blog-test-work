@@ -7,4 +7,6 @@ use App\Code\ModelAdapter;
 class BlogPosts extends ModelAdapter
 {
 
-} 
+    protected $tableAbbr = 'bp';
+
+}

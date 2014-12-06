@@ -3,7 +3,7 @@
 
 namespace App\Code;
 
-abstract class Object extends \SplObjectStorage
+abstract class Object
 {
     static public function getInstance()
     {

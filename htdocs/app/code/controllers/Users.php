@@ -36,7 +36,7 @@ class Users extends Controller
      */
     public function edit()
     {
-        $id = $_SESSION[Session::getInstance()->getSessionKey()]['userId'];
+        $id = User::getUserId();
 
         if (!($user = $this->model->selectById($id)))
             $this->response->Redirect('/blog/new/post');

@@ -4,19 +4,12 @@ namespace App\Code;
 
 use App\Code\Interfaces\IDbAdapter;
 
-class ModelAdapter extends Object implements IDbAdapter
+class ModelAdapter extends DbQuery implements IDbAdapter
 {
 
     const SET = 'set';
 
     const GET = 'get';
-
-    /**
-     * @var \PDO
-     */
-    protected $dbAdapter;
-
-    protected $tableName;
 
     protected $model;
 
@@ -90,6 +83,8 @@ class ModelAdapter extends Object implements IDbAdapter
      */
     public function create()
     {
+        $this->tableFieldsCollected();
+
         if (($fields = $this->getTableColumns())) {
             $object = new static();
             foreach ($fields as $field => $type) {
@@ -101,21 +96,6 @@ class ModelAdapter extends Object implements IDbAdapter
         }
 
         return false;
-    }
-
-    public function getTableColumns()
-    {
-        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
-        if ($statement->execute()) {
-            $fields = array();
-            while ($record = $statement->fetch()) {
-                $fields[$record['Field']] = $record['Type'];
-            }
-
-            return $fields;
-        }
-
-        return null;
     }
 
     /**
@@ -257,15 +237,27 @@ class ModelAdapter extends Object implements IDbAdapter
         return null;
     }
 
-    public function setData($array = null)
+    public function setData($array = null, $abbr = false)
     {
         if (empty($array))
             return false;
+
         foreach ($array as $key => $value) {
-            $this->set($key, $value);
+            if (!$abbr) {
+                $this->set($key, $value);
+            } else {
+                if (preg_match("/^{$this->tableAbbr}\_+(.*)$/i", $key)) {
+                    $field = str_replace($this->tableAbbr . '_', '', $key);
+                    if ($field == 'id') {
+                        $this->setId($value);
+                    } else {
+                        $this->set($field, $value);
+                    }
+                }
+            }
         }
 
-        return true;
+        return $this;
     }
 
     /**
@@ -282,5 +274,12 @@ class ModelAdapter extends Object implements IDbAdapter
     public function setErrorMessage($errorMessage)
     {
         $this->errorMessage = $errorMessage;
+    }
+
+    public function leftJoin(ModelAdapter $table = null)
+    {
+        $this->joinTable[$table->getName()] = $table;
+
+        return $this;
     }
 }

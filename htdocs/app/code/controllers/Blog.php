@@ -7,17 +7,31 @@ use app\code\Controller;
 /**
  * @route /blog
  */
-class Blogs extends Controller
+class Blog extends Controller
 {
 
     /**
      * @request get
+     * @route /index
      */
     public function index()
     {
-        $this->Blogs = $this->model->selectAll();
+        $collection = $this->model->selectBlogPosts()->getPostCollection();
+        $this->collection = $collection;
+        $this->user = $this->model->getUser();
+        $this->renderResponse('index');
+    }
 
-        $this->renderResponse();
+    /**
+     * @request get
+     */
+    public function posts()
+    {
+        $model = $this->getModel('BlogPosts');
+
+        $this->blogPosts = $model->selectAll();
+
+        $this->renderResponse('blog_posts');
     }
 
     /**
@@ -39,7 +53,7 @@ class Blogs extends Controller
     }
 
     /**
-     * @route /(new|edit)(?:/([0-9\-]+)?)?
+     * @route /edit
      * @request get
      * @allow session
      */
