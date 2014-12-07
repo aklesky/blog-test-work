@@ -131,7 +131,7 @@ class Request extends Object
     public function getRelativeUrl()
     {
         return '//' . $this->getHeader('HTTP_HOST') . DS .
-        ltrim($this->getBasePath(), DS);
+        trim($this->getBasePath(), DS) .DS ;
     }
 
     protected function getBasePath()
