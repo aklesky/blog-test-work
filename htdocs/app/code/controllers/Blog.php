@@ -56,8 +56,13 @@ class Blog extends Controller
      * @route /view(?:/([A-Za-z0-9\-]+)?)?
      * @param $slugTag
      */
-    public function view($slugTag)
+    public function view($slugTag = null)
     {
+        if($slugTag == null) {
+            $this->response->Redirect(
+                $this->request->getUrl());
+        }
+
         $this->view->setCanonicalUrl(
             $this->request->getUrl('blog/view/' . $slugTag));
         $this->settings = $this->model->selectFirst();
