@@ -1,4 +1,13 @@
 <?php if ($this->collection !== null) : ?>
+    <nav>
+        <ul class="pagination">
+            <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
+                <li>
+                    <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
     <?php
     /**
      * @var $post App\Code\Models\Blogs
@@ -23,15 +32,15 @@
         </div>
         <hr />
     <?php endforeach; ?>
+    <nav>
+        <ul class="pagination">
+            <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
+                <li>
+                    <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
 <?php else : ?>
     Blog has no entries.
 <?php endif; ?>
-<nav>
-    <ul class="pagination">
-        <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
-            <li>
-                <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
-            </li>
-        <?php endfor; ?>
-    </ul>
-</nav>
