@@ -155,7 +155,7 @@ class Request extends Object
 
     public function getBaseUrl()
     {
-        return $this->getBaseHost() . $this->getBasePath();
+        return $this->getBaseHost() . rtrim($this->getBasePath(),DS). DS;
     }
 
     public function getBaseHost()
