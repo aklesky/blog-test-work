@@ -47,6 +47,9 @@ class Controller extends Object
      */
     protected function getModel($model = null)
     {
+        if (get_called_class() == Controller::getClass())
+            return false;
+
         if ($model != null)
             return App::getModel($model);
 
@@ -76,11 +79,14 @@ class Controller extends Object
 
     /**
      * @route /404
+     * @request get
      */
 
     public function notFound()
     {
-        $this->renderResponse(404);
+        $this->response->ViewResponse(
+            $this->view->loadCustomViewFile('404.phtml'), 404
+        );
     }
 
     protected function renderXmlResponse($data)

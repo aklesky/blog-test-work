@@ -3,7 +3,7 @@
         <ul class="pagination">
             <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
                 <li>
-                    <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
+                    <a href="<?php echo $this->getUrl('blog/' . $i); ?>"><? echo $i; ?></a>
                 </li>
             <?php endfor; ?>
         </ul>
@@ -36,7 +36,7 @@
         <ul class="pagination">
             <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
                 <li>
-                    <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
+                    <a href="<?php echo $this->getUrl('blog/' . $i); ?>"><? echo $i; ?></a>
                 </li>
             <?php endfor; ?>
         </ul>

@@ -29,7 +29,7 @@ use App\Code\User;
 <div class="blog-masthead">
     <div class="container">
         <nav class="blog-nav">
-            <a class="blog-nav-item active" href="<?php echo $this->getUrl('blog/index');?>">Aklesky's - Blog - Home</a>
+            <a class="blog-nav-item active" href="<?php echo $this->getUrl('blog');?>">Aklesky's - Blog - Home</a>
             <?php if (!User::isOnline()) : ?>
                 <div class="sidebar-module sidebar-module-inset">
                     <form role="form" method="post"
@@ -50,6 +50,7 @@ use App\Code\User;
                         </div>
                         <button type="submit" class="btn btn-default">Submit
                         </button>
+                        <a href="<?php echo $this->getUrl('user/registration');?>" class="btn btn-default">Register</a>
                     </form>
                 </div>
             <?php else : ?>
@@ -77,6 +78,7 @@ use App\Code\User;
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('user/admin/list');?>">Users</a></li>
                                 <li role="presentation"><a href="<?php echo $this->getUrl('user/admin/edit');?>" >My Account</a></li>
+                                <li role="presentation"><a href="<?php echo $this->getUrl('user/logout');?>" >Logout</a></li
                             </ul>
                         </div>
 

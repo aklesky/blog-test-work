@@ -24,6 +24,9 @@ class Users extends Controller
         if ($this->request->isAjaxPost()) {
             $user = $this->model->create();
             if ($user->addUser($this->request->getPost())) {
+                $this->response->JsonResponse(
+                    array('redirect', $this->request->getUrl('blog'))
+                );
             }
         }
     }
@@ -105,6 +108,7 @@ class Users extends Controller
 
     public function registration()
     {
+        $this->settings = $this->getModel('Blog')->selectFirst();
         $this->renderResponse();
     }
 

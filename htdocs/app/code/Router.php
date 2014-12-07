@@ -7,6 +7,10 @@ class Router extends Object
 
     protected $routeList;
 
+    protected $defaultController;
+
+    protected $defaultMethod;
+
     /**
      * @param $path
      * @return bool|null
@@ -73,6 +77,12 @@ class Router extends Object
 
             $controllerName = $controllerClass->getName();
 
+            if ($this->getPatternBlock('default',
+                    $controllerClass->getDocComment()) != null
+            ) {
+                $this->defaultController = $controllerName;
+            }
+
             /**
              * @var $method \ReflectionMethod
              */
@@ -81,6 +91,9 @@ class Router extends Object
             foreach ($controllerClass->getMethods() as $method) {
 
                 if ($this->_isMethodAllowed($method)) {
+                    if ($this->getPatternBlock('default', $method->getDocComment())) {
+                        $this->defaultMethod = $method->getName();
+                    }
                     $routeName['routes'][] = array(
                         'controller' => $controllerName,
                         'pattern' => $this->_getRoutePattern($method, $controllerRoute),
@@ -106,14 +119,35 @@ class Router extends Object
             : $routePattern;
     }
 
-    private function _getRoutePatternBlock($commentBlock = null)
+    private function _getRoutePatternBlock($commentBlock = null, $pattern = 'route')
     {
-        return trim($this->getPatternBlock('route', $commentBlock), DS);
+        return trim($this->getPatternBlock($pattern, $commentBlock), DS);
     }
 
     private function _isMethodAllowed(\ReflectionMethod $method)
     {
         return $method->isPublic() && !$method->isStatic()
         && $method->isUserDefined() && !$method->isConstructor();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultController()
+    {
+        return $this->defaultController;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultMethod()
+    {
+        return $this->defaultMethod;
+    }
+
+    public function routerHasDefault()
+    {
+        return $this->getDefaultController() != null && $this->getDefaultMethod() != null;
     }
 } 
