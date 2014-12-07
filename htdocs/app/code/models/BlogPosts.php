@@ -50,7 +50,7 @@ class BlogPosts extends ModelAdapter
         return $this->blog;
     }
 
-    public function selectBlogPosts($limit = 5, $offset = 0)
+    public function selectBlogPosts($limit = 0, $offset = 0)
     {
 
         $this->setRowsCount($this->getPostsCount());
@@ -101,7 +101,7 @@ class BlogPosts extends ModelAdapter
             , true, 'post_date');
     }
 
-    public function selectBlogPostBySlugTag($slugTag = null)
+    public function selectBlogPostBySlugTag($slugTag = null, $limit = 0)
     {
         $users = App::getModel('Users');
         $users->setOn($users->getField('id'), $this->getField('user_id'));
@@ -109,7 +109,7 @@ class BlogPosts extends ModelAdapter
         $comments = App::getModel('BlogComments');
         $comments->setOn(
             $this->getField('id'), $comments->getField('post_id')
-        )->setLimit(5)->setOrderBy('comment_date');
+        )->setLimit($limit)->setOrderBy('comment_date', 'asc');
 
         $this->setWhere(
             $this->getField('post_slug_tag'),

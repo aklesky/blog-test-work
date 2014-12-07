@@ -1,7 +1,6 @@
 <?php
 namespace App\Code\Controllers;
 
-use App\Code\Acl\Session;
 use app\code\Controller;
 use app\code\User;
 
@@ -30,29 +29,33 @@ class Users extends Controller
     }
 
     /**
-     * @route /edit(?:/(.*)?)?
+     * @route /admin/edit(?:/([0-9]+)?)?
      * @request get
      * @allow session
      */
-    public function edit()
+    public function edit($id = null)
     {
-        $id = User::getUserId();
+        $this->settings = $this->getModel('Blog')->selectFirst();
 
-        if (!($user = $this->model->selectById($id)))
-            $this->response->Redirect('/blog/new/post');
+        $id = !empty($id) ? $id : User::getUserId();
+
+        $user = $this->model->selectById($id);
+
         $this->editable = $user;
-        $this->renderResponse();
+        $this->renderResponse('edit');
     }
 
     /**
-     * @route /save
+     * @route /admin/save
      * @request post
      * @allow session
      */
     public function save()
     {
+
         if ($this->request->isAjaxPost()) {
-            $id = $_SESSION[Session::getInstance()->getSessionKey()]['userId'];
+            $id = $this->request->getPost('id');
+
             if (!($user = $this->model->selectById($id))) {
                 $this->response->JsonResponse(
                     $this->model->getErrorMessage()
@@ -61,7 +64,9 @@ class Users extends Controller
                 return;
             }
             $user->updateUser($this->request->getPost());
-            $this->response->JsonResponse();
+            $this->response->JsonResponse(
+                array('self' => true)
+            );
         }
     }
 
@@ -86,7 +91,9 @@ class Users extends Controller
             }
 
             User::setUserSession($user->getId());
-            $this->response->JsonResponse();
+            $this->response->JsonResponse(
+                array('self' => true)
+            );
         }
     }
 
@@ -111,6 +118,33 @@ class Users extends Controller
     {
         session_destroy();
         $this->response->Redirect('/');
+    }
+
+    /**
+     * @route /admin/list
+     * @request get
+     * @allow session
+     */
+
+    public function usersList()
+    {
+        $this->settings = $this->getModel('Blog')->selectFirst();
+        $this->collection = $this->model->selectAll();
+        $this->renderResponse('users');
+    }
+
+    /**
+     * @route /admin/delete(?:/([0-9]+)?)?
+     * @request get
+     * @allow session
+     */
+    public function delete($id = null)
+    {
+        if (empty($id))
+            $this->response->Redirect('/user/admin/list');
+        $user = $this->model->selectById($id);
+        $user->delete();
+        $this->response->Redirect('/user/admin/list');
     }
 }
 

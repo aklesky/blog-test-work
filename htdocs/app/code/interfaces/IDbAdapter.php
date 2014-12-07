@@ -21,4 +21,6 @@ interface IDbAdapter
     public function create();
 
     public function leftJoin(ModelAdapter $table = null);
+
+    public function selectFirst();
 } 

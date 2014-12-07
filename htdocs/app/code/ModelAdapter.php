@@ -144,6 +144,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
             $fields[] = $record['fieldName'];
             $values[] = $this->dbAdapter->quote($record['value']);
         }
+
         $prepare = $this->dbAdapter->prepare(
             "insert into `{$this->tableName}` (`" . implode('`,`', $fields) . "`) values " .
             "(" . implode(",", $values) . ")"
@@ -186,6 +187,17 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $this->id = $id;
 
         return $this;
+    }
+
+    public function selectFirst()
+    {
+        $prepare = $this->dbAdapter->prepare(
+            "select * from `{$this->tableName}` limit 1"
+        );
+        if ($prepare->execute())
+            return $prepare->fetchObject($this->model->getName());
+
+        return null;
     }
 
     public function delete()

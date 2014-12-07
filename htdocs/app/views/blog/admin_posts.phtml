@@ -1,0 +1,20 @@
+<?php if ($this->collection !== null) : ?>
+    <?php
+    /**
+     * @var $post App\Code\Models\Blogs
+     */
+    ?>
+    <?php foreach ($this->collection as $post) : ?>
+        <div class="blog-post">
+            <h2 class="blog-post-title"><a href="<?php
+                echo $this->getUrl('blog/admin/edit/post/' . $post->getId());?>"><?php echo $post->getPostTitle(); ?></a>
+            </h2>
+            <p class="blog-post-meta"><?php echo $post->getPostDate(); ?></p>
+            <a class="btn btn-default" href="<?php
+            echo $this->getUrl('blog/admin/edit/post/' . $post->getId());?>">Edit Post</a>
+            <a class="btn btn-default" href="<?php
+            echo $this->getUrl('blog/admin/delete/post/' . $post->getId());?>">Delete Post</a>
+        </div>
+        <hr />
+    <?php endforeach; ?>
+<?php endif; ?>

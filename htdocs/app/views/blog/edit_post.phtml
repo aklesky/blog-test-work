@@ -3,8 +3,8 @@ use app\code\User;
 if(User::isOnline()) :
 ?>
 <form class="form-horizontal" action="<?php
-echo $this->getUrl('blog/save/post');?>" data-endpoint="<?php
-echo $this->getUrl('blog/upload');?>" method="post" role="form">
+echo $this->getUrl('blog/admin/save/post');?>" data-endpoint="<?php
+echo $this->getUrl('blog/admin/upload');?>" method="post" role="form">
     <input type="hidden" name="BlogId" id="blog_id" value="<?php
     echo $this->editable ? $this->editable->getBlogId() : null;?>"/>
     <?php if($this->editable != null) : ?>
@@ -15,6 +15,13 @@ echo $this->getUrl('blog/upload');?>" method="post" role="form">
         <div class="col-sm-8">
             <input type="text" class="form-control" name="PostTitle" id="post_title" placeholder="Post Title" value="<?php
             echo $this->editable ? $this->editable->getPostTitle() : null; ?>">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="post_schedule" class="col-sm-4 control-label text-left">Post Schedule Date</label>
+        <div class="col-sm-8">
+            <input type="date" pattern="\(\d\d\d\)" min="2014-12-01" class="form-control" name="PostSchedule" id="post_schedule" placeholder="Post Schedule date" value="<?php
+            echo $this->editable ? $this->editable->getPostSchedule() : null; ?>">
         </div>
     </div>
     <div class="form-group">

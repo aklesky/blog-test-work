@@ -21,6 +21,8 @@ class View extends Object
 
     protected $view = null;
 
+    protected $canonicalUrl = null;
+
     public function __construct($viewsDirectory = null, $layoutFile = null)
     {
 
@@ -78,17 +80,15 @@ class View extends Object
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function loadCustomViewFile($view = null, $directory = null)
     {
-        $this->content = $this->loadTemplateFile($this->view);
-        $content = $this->loadTemplateFile(
-            $this->viewDirectory . $this->layout . $this->defaultExtension
-        );
 
-        return $content;
+        $directory = !empty($directory) ? mb_strtolower($directory) . DS : null;
+
+        $filename = $this->viewDirectory .
+            $directory . $view;
+
+        return $this->loadTemplateFile($filename);
     }
 
     protected function loadTemplateFile($filename)
@@ -102,6 +102,35 @@ class View extends Object
         ob_get_clean();
 
         return (string)$content;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $this->content = $this->loadTemplateFile($this->view);
+        $content = $this->loadTemplateFile(
+            $this->viewDirectory . $this->layout . $this->defaultExtension
+        );
+
+        return $content;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCanonicalUrl()
+    {
+        return $this->canonicalUrl;
+    }
+
+    /**
+     * @param null $canonicalUrl
+     */
+    public function setCanonicalUrl($canonicalUrl)
+    {
+        $this->canonicalUrl = $canonicalUrl;
     }
 
     public static function getCurrentUrl()

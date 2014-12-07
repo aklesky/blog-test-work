@@ -3,33 +3,49 @@
 namespace App\Code\Controllers;
 
 use app\code\Controller;
-use app\code\User;
 use App\Vendors\FileUploader\qqFileUploader;
 
 /**
  * @route /blog
+ * @default /
  */
 class Blog extends Controller
 {
+
+    /**
+     * @route /sitemap.xml
+     * @request get|post
+     */
+    public function sitemap()
+    {
+        $blogPosts = $this->getModel('BlogPosts');
+        $this->collection = $blogPosts->selectAll();
+        $this->renderResponseFile('sitemap.phtml');
+    }
 
     /**
      * @param int $page
      * @return string|void
      * @request get
      * @route /index(?:/([0-9])?)?
+     * @default /
      */
+
     public function index($page = 0)
     {
+        $this->view->setCanonicalUrl(
+            $this->request->getUrl('blog/index'));
 
+        $settings = $this->model->selectFirst();
         $postModel = $this->getModel('BlogPosts');
         $collection = $postModel->selectBlogPosts(
-            5, $page
+            $settings->getBlogPostLimit(), $page
         )->getPostCollection();
 
         $this->pages = ceil($postModel->getRowsCount() / 5);
 
         $this->currentPage = $page;
-
+        $this->settings = $settings;
         $this->collection = $collection;
         $this->user = $postModel->getUser();
         $this->renderResponse('index');
@@ -42,6 +58,9 @@ class Blog extends Controller
      */
     public function view($slugTag)
     {
+        $this->view->setCanonicalUrl(
+            $this->request->getUrl('blog/view/' . $slugTag));
+        $this->settings = $this->model->selectFirst();
         $postModel = $this->getModel('BlogPosts');
         $post = $postModel->selectBlogPostBySlugTag($slugTag);
 
@@ -50,25 +69,30 @@ class Blog extends Controller
     }
 
     /**
+     * @route /admin/post/list
      * @request get
      * @allow session
      */
-    public function posts()
+    public function postList()
     {
+        $this->settings = $this->model->selectFirst();
+
         $model = $this->getModel('BlogPosts');
 
-        $this->blogPosts = $model->selectAll();
+        $this->collection = $model->selectAll();
 
-        $this->renderResponse('blog_posts');
+        $this->renderResponse('admin_posts');
     }
 
     /**
-     * @route /(new|edit)/post(?:/([0-9\-]+)?)?
+     * @route /admin/(new|edit)/post(?:/([0-9\-]+)?)?
      * @request get
      * @allow session
      */
     public function editPost($action = null, $id = null)
     {
+        $this->settings = $this->model->selectFirst();
+
         if ($action == 'edit') {
             $postModel = $this->getModel('BlogPosts');
             if (!($this->editable = $postModel->selectById($id))) {
@@ -81,23 +105,21 @@ class Blog extends Controller
     }
 
     /**
-     * @route /edit
+     * @route /admin/settings
      * @request get
      * @allow session
      */
 
     public function editBlog()
     {
-        if (!($this->editable = $this->model->selectBlogByUserId(User::getUserId()))) {
-            $this->response->Redirect(
-                $this->request->getUrl('blog/new/blog')
-            );
-        }
+        $settings = $this->model->selectFirst();
+        $this->editable = $settings;
+        $this->settings = $settings;
         $this->renderResponse('edit_blog');
     }
 
     /**
-     * @route /save
+     * @route /admin/save
      * @request post
      * @allow session
      */
@@ -122,7 +144,7 @@ class Blog extends Controller
     }
 
     /**
-     * @route /save/post
+     * @route /admin/save/post
      * @request post
      * @allow session
      */
@@ -140,13 +162,17 @@ class Blog extends Controller
             }
 
             $post->setData($data);
+
+            $post->setPostSchedule(
+                date("Y-m-d", strtotime($post->getPostSchedule())));
+
             if (!$post->save()) {
                 $this->response->JsonResponse($post->getErrorMessage());
             } else {
                 $this->response->JsonResponse(
                     array(
                         'id' => $post->getId(),
-                        'self' => true
+                        'redirect' => $this->request->getUrl('blog/admin/edit/post/' . $post->getId())
                     )
                 );
             }
@@ -154,7 +180,7 @@ class Blog extends Controller
     }
 
     /**
-     * @route /upload
+     * @route /admin/upload
      * @request post
      * @allow session
      */
@@ -177,5 +203,40 @@ class Blog extends Controller
         $this->response->JsonResponse(
             $result
         );
+    }
+
+    /**
+     * @route /add/comment
+     * @request post
+     */
+    public function addComment()
+    {
+        $blogComments = $this->getModel('BlogComments')->create();
+        $postId = $this->request->getPost('PostId');
+        $blogPosts = $this->getModel('BlogPosts')->create();
+        $post = $blogPosts->selectById($postId);
+
+        $blogComments->setData($this->request->getPost());
+        $blogComments->save();
+        $this->response->JsonResponse(
+            array('self' => true)
+        );
+    }
+
+    /**
+     * @route /admin/delete/post(?:/([0-9\-]+)?)?
+     * @param null $id
+     * @request get
+     * @allow session
+     */
+
+    public function deletePost($id = null)
+    {
+        $blogPosts = $this->getModel('BlogPosts');
+        $post = $blogPosts->selectById($id);
+        if ($post != null && $post->getId() != null) {
+            $post->delete();
+        }
+        $this->response->Redirect('/blog/admin/post/list');
     }
 } 

@@ -12,11 +12,5 @@ use app\code\Controller;
  */
 class Index extends Controller
 {
-    /**
-     * @route /sitemap.xml
-     * @request get|post
-     */
-    public function sitemap()
-    {
-    }
+
 }

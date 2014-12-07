@@ -1,0 +1,29 @@
+<?php
+use App\Code\User;
+
+?>
+    <h3>Users</h3>
+    <hr />
+<?php foreach ($this->collection as $users) : ?>
+    <div class="blog-post">
+        <h2 class="blog-post-title"><a href="<?php
+            echo $this->getUrl('user/admin/edit/' . $users->getId());?>"><?php echo $users->getUsername(); ?></a>
+
+        </h2>
+
+        <p class="blog-post-meta"><?php echo $users->getEmail(); ?> - <a
+                href="<?php
+                echo $this->getUrl('user/admin/edit/' . $users->getId());?>"><?php
+                echo $users->getFirstname() . ' ' . $users->getLastname();?></a>
+            <a class="btn col-lg-offset-2 btn-default" href="<?php
+            echo $this->getUrl('user/admin/edit/' . $users->getId());?>">Edit
+                user</a>
+            <?php if ($users->getId() != User::getUserId()) : ?>
+                <a class="btn btn-default" href="<?php
+                echo $this->getUrl('user/admin/delete/' . $users->getId());?>">Delete
+                    user</a>
+            <?php endif; ?>
+        </p>
+    </div>
+    <hr />
+<?php endforeach; ?>

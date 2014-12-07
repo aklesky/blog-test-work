@@ -87,4 +87,11 @@ class Controller extends Object
     {
         $this->response->XmlResponse($data);
     }
+
+    protected function renderResponseFile($file)
+    {
+        $this->response->XmlResponse(
+            $this->view->loadCustomViewFile($file, self::getName())
+        );
+    }
 }

@@ -5,7 +5,7 @@ use App\Code\User;
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <title>Blog</title>
+    <title><?php echo $this->settings->getBlogTitle();?></title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,13 +21,15 @@ use App\Code\User;
     <link rel="stylesheet" href="<?php echo $this::getCss('preloader.css'); ?>">
     <!-- Latest compiled and minified JavaScript -->
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-
+    <?php if($this->getCanonicalUrl() != null) : ?>
+    <link rel="canonical" href="<?php echo $this->getCanonicalUrl(); ?>" />
+    <?php endif;?>
 </head>
 <body>
 <div class="blog-masthead">
     <div class="container">
         <nav class="blog-nav">
-            <a class="blog-nav-item active" href="#">Aklesky's - Blog</a>
+            <a class="blog-nav-item active" href="<?php echo $this->getUrl('blog/index');?>">Aklesky's - Blog - Home</a>
             <?php if (!User::isOnline()) : ?>
                 <div class="sidebar-module sidebar-module-inset">
                     <form role="form" method="post"
@@ -52,22 +54,35 @@ use App\Code\User;
                 </div>
             <?php else : ?>
                 <div class="sidebar-module sidebar-module-inset">
-                    <div class="btn-group-vertical" role="group" aria-label="...">
+                    <div class="btn-group" role="group" aria-label="...">
                         <div class="dropdown" role="group">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                                 Blog management
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/edit');?>">Blog settings</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/new/post');?>">Add post</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/posts');?>">Posts</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/admin/settings');?>">Blog settings</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/admin/new/post');?>">Add post</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('blog/admin/post/list');?>">Posts</a></li>
                             </ul>
                         </div>
-                        <p class="divider"></p>
-                        <div class="btn-group" role="group">
-                            <a href="<?php echo $this->getUrl('user/edit');?>" class="btn btn-block btn-default">My Account</a>
+
+                    </div>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <div class="dropdown" role="group">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                User management
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->getUrl('user/admin/list');?>">Users</a></li>
+                                <li role="presentation"><a href="<?php echo $this->getUrl('user/admin/edit');?>" >My Account</a></li>
+                            </ul>
                         </div>
+
+                    </div>
+                    <div class="btn-group" role="group">
+
                     </div>
                 </div>
             <?php endif; ?>
@@ -78,10 +93,9 @@ use App\Code\User;
 <div class="container">
 
     <div class="blog-header">
-        <h1 class="blog-title">Aklesky's Blog Service</h1>
+        <h1 class="blog-title"><?php echo $this->settings->getBlogTitle();?></h1>
 
-        <p class="lead blog-description">The official example template of
-            creating a blog with Bootstrap.</p>
+        <p class="lead blog-description"><?php echo $this->settings->getBlogDescription();?></p>
     </div>
 
     <div class="row">

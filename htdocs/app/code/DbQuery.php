@@ -27,6 +27,8 @@ class DbQuery extends Object
 
     protected $tableAbbr;
 
+    protected $orderDirection = 'desc';
+
     protected function runLeftJoinQuery()
     {
         $fieldsToSelect[] = $this->makeSelectableTableFields(true);
@@ -56,7 +58,7 @@ class DbQuery extends Object
         }
 
         if ($this->getOrderBy() != null) {
-            $query .= ' order by ' . $this->getOrderBy() . ' desc';
+            $query .= ' order by ' . $this->getOrderBy() . ' ' . $this->orderDirection;
         }
         if ($this->hasLimit()) {
             $query .= ' limit ' . $this->getOffset() . ',' . $this->getLimit();
@@ -86,24 +88,6 @@ class DbQuery extends Object
         return implode(',', $tableFields);
     }
 
-    protected function setTableAbbr($column, $field)
-    {
-        if (empty($this->tableAbbr))
-            return null;
-
-        return $column . ' as ' . $this->tableAbbr . '_' . $field . ' ';
-    }
-
-    public function getField($key)
-    {
-        $this->tableFieldsCollected();
-
-        if (!isset($this->tableFields[$key]))
-            return null;
-
-        return $this->formatField($key);
-    }
-
     protected function tableFieldsCollected()
     {
         if (empty($this->tableFields)) {
@@ -123,6 +107,24 @@ class DbQuery extends Object
         }
 
         return $this;
+    }
+
+    protected function setTableAbbr($column, $field)
+    {
+        if (empty($this->tableAbbr))
+            return null;
+
+        return $column . ' as ' . $this->tableAbbr . '_' . $field . ' ';
+    }
+
+    public function getField($key)
+    {
+        $this->tableFieldsCollected();
+
+        if (!isset($this->tableFields[$key]))
+            return null;
+
+        return $this->formatField($key);
     }
 
     protected function formatField($tableField = null)
@@ -173,7 +175,7 @@ class DbQuery extends Object
         }
 
         if ($this->getOrderBy() != null) {
-            $query .= ' order by ' . $this->getOrderBy() . ' desc';
+            $query .= ' order by ' . $this->getOrderBy() . $this->orderDirection;
         }
         if ($this->hasLimit()) {
             $query .= ' limit ' . $this->getOffset() . ',' . $this->getLimit();
@@ -227,11 +229,13 @@ class DbQuery extends Object
 
     /**
      * @param $orderBy
+     * @param string $direction
      * @return $this
      */
-    public function setOrderBy($orderBy)
+    public function setOrderBy($orderBy, $direction = "desc")
     {
         $this->orderBy = $orderBy;
+        $this->orderDirection = $direction;
 
         return $this;
     }
