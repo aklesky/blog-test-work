@@ -237,6 +237,7 @@ class Blog extends Controller
         if ($post != null && $post->getId() != null) {
             $post->delete();
         }
-        $this->response->Redirect('/blog/admin/post/list');
+        $this->response->Redirect(
+            $this->request->getUrl('/blog/admin/post/list'));
     }
 } 

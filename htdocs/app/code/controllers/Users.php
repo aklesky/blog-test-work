@@ -25,7 +25,7 @@ class Users extends Controller
             $user = $this->model->create();
             if ($user->addUser($this->request->getPost())) {
                 $this->response->JsonResponse(
-                    array('redirect', $this->request->getUrl('blog'))
+                    array('redirect'=>$this->request->getUrl('blog'))
                 );
             }
         }
@@ -121,7 +121,9 @@ class Users extends Controller
     public function logout()
     {
         session_destroy();
-        $this->response->Redirect('/');
+        $this->response->Redirect(
+            $this->request->getUrl()
+        );
     }
 
     /**
@@ -148,7 +150,9 @@ class Users extends Controller
             $this->response->Redirect('/user/admin/list');
         $user = $this->model->selectById($id);
         $user->delete();
-        $this->response->Redirect('/user/admin/list');
+        $this->response->Redirect(
+            $this->request->getUrl('/user/admin/list')
+        );
     }
 }
 
