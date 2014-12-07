@@ -20,7 +20,7 @@ echo $this->getUrl('blog/admin/upload');?>" method="post" role="form">
     <div class="form-group">
         <label for="post_schedule" class="col-sm-4 control-label text-left">Post Schedule Date</label>
         <div class="col-sm-8">
-            <input type="date" pattern="\(\d\d\d\)" min="2014-12-01" class="form-control" name="PostSchedule" id="post_schedule" placeholder="Post Schedule date" value="<?php
+            <input type="date" min="<?php echo date('Y-m-d');?>" class="form-control" name="PostSchedule" id="post_schedule" placeholder="Post Schedule date" value="<?php
             echo $this->editable ? $this->editable->getPostSchedule() : null; ?>">
         </div>
     </div>
