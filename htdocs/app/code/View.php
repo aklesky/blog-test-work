@@ -134,4 +134,13 @@ class View extends Object
 
         return self::getMedia() . 'js' . DS . $filename;
     }
+
+    public static function getUpload($filename)
+    {
+        if (!is_readable(Uploads . $filename))
+            return null;
+
+        return Request::getInstance()->getRelativeUrl() . 'uploads' . DS .
+        $filename;
+    }
 }

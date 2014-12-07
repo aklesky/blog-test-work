@@ -7,6 +7,6 @@ use App\Code\ModelAdapter;
 class BlogComments extends ModelAdapter
 {
 
-    protected $tableAbbr = 'bc_';
+    protected $tableAbbr = 'bc';
 
 }

@@ -1,0 +1,34 @@
+<?php
+if ($this->post == null)
+    return;
+?>
+
+    <div class="blog-post">
+        <h2 class="blog-post-title"><?php echo $this->post->getPostTitle(); ?></h2>
+
+        <p class="blog-post-meta"><?php echo $this->post->getPostDate(); ?> by
+            <a href="#"><?php
+                echo $this->post->getUser()->getUsername();?></a></p>
+        <?php if ($this->post->getPostPicture() != null) : ?>
+            <p class="img-thumbnail blog-post-meta">
+                <img class="img-thumbnail"
+                     src="<?php echo $this->getUpload($this->post->getPostPicture()); ?>" />
+            </p>
+        <?php endif; ?>
+        <?php echo $this->post->getPostText(); ?>
+    </div>
+    <hr />
+<?php
+$commentCollection = $this->post->getCommentCollection();
+if (!empty($commentCollection)) : ?>
+    <h4 class="text-uppercase">5 last comments</h4>
+    <hr/>
+    <?php foreach ($commentCollection as $comment) : ?>
+        <div class="blog-post">
+            <h2 class="blog-post-title"><?php echo $comment->getCommentator(); ?></h2>
+
+            <p class="blog-post-meta"><?php echo $comment->getCommentDate(); ?></p>
+            <?php echo $comment->getComment(); ?>
+        </div>
+        <?php endforeach; ?>
+        <?php endif; ?>

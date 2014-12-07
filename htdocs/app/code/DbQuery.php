@@ -11,8 +11,6 @@ class DbQuery extends Object
 
     protected $tableName;
 
-    protected $tableFields = array();
-
     protected $joinTable = array();
 
     protected $selectFields = array();
@@ -28,62 +26,6 @@ class DbQuery extends Object
     protected $where;
 
     protected $tableAbbr;
-
-    public function selectFields($fields = array())
-    {
-        if (empty($fields))
-            return null;
-        $this->tableFieldsCollected();
-        foreach ($fields as $field) {
-            if (($column = $this->getField($field)) != null) {
-                $this->selectFields[] = $column;
-            }
-        }
-    }
-
-    protected function tableFieldsCollected()
-    {
-        if (empty($this->tableFields)) {
-            $this->getTableColumns();
-        }
-    }
-
-    public function getTableColumns()
-    {
-        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
-        if ($statement->execute()) {
-            while ($record = $statement->fetch()) {
-                $this->tableFields[$record['Field']] = $record['Type'];
-            }
-
-            return $this->tableFields;
-        }
-
-        return $this;
-    }
-
-    public function getField($key)
-    {
-        $this->tableFieldsCollected();
-
-        if (!isset($this->tableFields[$key]))
-            return null;
-
-        return $this->formatField($key);
-    }
-
-    protected function formatField($tableField = null)
-    {
-        return sprintf('`%s`.`%s`', $this->getTableName(), $tableField);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
-    }
 
     protected function runLeftJoinQuery()
     {
@@ -108,11 +50,22 @@ class DbQuery extends Object
         $query .= implode(',', $fieldsToSelect);
         $query .= $this->getFromSQL() . ' ';
         $query .= implode(' ', $leftJoin) . ' ';
-        $query .= $this->getWhere();
+
+        if ($this->getWhere() != null) {
+            $query .= ' ' . $this->getWhere();
+        }
+
+        if ($this->getOrderBy() != null) {
+            $query .= ' order by ' . $this->getOrderBy() . ' desc';
+        }
+        if ($this->hasLimit()) {
+            $query .= ' limit ' . $this->getOffset() . ',' . $this->getLimit();
+        }
 
         $prepare = $this->dbAdapter->query($query);
         if (!$prepare->execute())
             return false;
+
         return $prepare->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -131,6 +84,58 @@ class DbQuery extends Object
         }
 
         return implode(',', $tableFields);
+    }
+
+    protected function setTableAbbr($column, $field)
+    {
+        if (empty($this->tableAbbr))
+            return null;
+
+        return $column . ' as ' . $this->tableAbbr . '_' . $field . ' ';
+    }
+
+    public function getField($key)
+    {
+        $this->tableFieldsCollected();
+
+        if (!isset($this->tableFields[$key]))
+            return null;
+
+        return $this->formatField($key);
+    }
+
+    protected function tableFieldsCollected()
+    {
+        if (empty($this->tableFields)) {
+            $this->getTableColumns();
+        }
+    }
+
+    public function getTableColumns()
+    {
+        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
+        if ($statement->execute()) {
+            while ($record = $statement->fetch()) {
+                $this->tableFields[$record['Field']] = $record['Type'];
+            }
+
+            return $this->tableFields;
+        }
+
+        return $this;
+    }
+
+    protected function formatField($tableField = null)
+    {
+        return sprintf('`%s`.`%s`', $this->getTableName(), $tableField);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     protected function hasLimit()
@@ -214,6 +219,9 @@ class DbQuery extends Object
      */
     public function getOrderBy()
     {
+        if (empty($this->orderBy))
+            return null;
+
         return $this->formatField($this->orderBy);
     }
 
@@ -279,13 +287,5 @@ class DbQuery extends Object
     protected function getFromSQL()
     {
         return sprintf('from `%s` as `%s`', $this->getTableName(), $this->getTableName());
-    }
-
-    protected function setTableAbbr($column, $field)
-    {
-        if (empty($this->tableAbbr))
-            return null;
-
-        return $column . ' as ' . $this->tableAbbr . '_' . $field . ' ';
     }
 } 

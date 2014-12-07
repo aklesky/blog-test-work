@@ -17,10 +17,11 @@ use App\Code\User;
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
     <link rel="stylesheet" href="<?php echo $this::getCss('blog.css'); ?>">
-
+    <link rel="stylesheet" href="<?php echo $this::getCss('fineuploader.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $this::getCss('preloader.css'); ?>">
     <!-- Latest compiled and minified JavaScript -->
-    <script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+
 </head>
 <body>
 <div class="blog-masthead">
@@ -113,6 +114,17 @@ use App\Code\User;
 
 <script
     src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="<?php echo $this->getJs("fileuploader/header.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/util.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/button.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/handler.base.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/handler.form.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/handler.xhr.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/uploader.basic.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/dnd.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/uploader.js");?>"></script>
+<script src="<?php echo $this->getJs("fileuploader/jquery-plugin.js");?>"></script>
+
 <script src="<?php echo $this->getJs('form.js'); ?>"></script>
 </body>
 </html>

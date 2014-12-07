@@ -3,7 +3,8 @@ use app\code\User;
 if(User::isOnline()) :
 ?>
 <form class="form-horizontal" action="<?php
-echo $this->getUrl('blog/save/post');?>" method="post" role="form">
+echo $this->getUrl('blog/save/post');?>" data-endpoint="<?php
+echo $this->getUrl('blog/upload');?>" method="post" role="form">
     <input type="hidden" name="BlogId" id="blog_id" value="<?php
     echo $this->editable ? $this->editable->getBlogId() : null;?>"/>
     <?php if($this->editable != null) : ?>
@@ -37,6 +38,21 @@ echo $this->getUrl('blog/save/post');?>" method="post" role="form">
                 echo $this->editable ? $this->editable->getPostText() : null; ?></textarea>
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label text-left">Upload image</label>
+        <div class="col-sm-6">
+            <div id="manual-fine-uploader"></div>
+        </div>
+    </div>
+    <?php if($this->editable) : ?>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <img class="img-thumbnail" src="<?php echo $this->getUpload($this->editable->getPostPicture());?>" />
+            </div>
+        </div>
+<?php endif; ?>
+
+
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" class="btn btn-default">Save</button>

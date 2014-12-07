@@ -19,6 +19,8 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     protected $errorMessage;
 
+    protected $rowsCount = 0;
+
     public function __construct()
     {
         /** @var Database $database */
@@ -68,7 +70,6 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     public function set($key, $value)
     {
-
         $key = $this->capitalsToUnderscore($key);
         if (isset($this->recordData[$key])) {
             $this->recordData[$key]['original'] = $this->get($key);
@@ -226,6 +227,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         );
 
         if ($prepare->execute() && $prepare->rowCount() > 0) {
+            $this->rowsCount = $prepare->rowCount();
             $collection = array();
             while ($record = $prepare->fetchObject($this->model->getName())) {
                 $collection[] = $record;
@@ -235,6 +237,34 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         }
 
         return null;
+    }
+
+    public function selectAllBy(array $options = array(), $returnCount = false,
+                                $orderBy = null, $direction = 'desc')
+    {
+        $query = "select * from {$this->getTableName()}";
+
+        $query .= $this->setWhere(
+            $options['field'], $options['value'], $options['opt']
+        )->getWhere();
+
+        if (!empty($orderBy)) {
+            $query .= ' order by ' . $this->formatField($orderBy) . " {$direction}";
+        }
+
+        $prepare = $this->dbAdapter->query($query);
+        if (!$prepare->execute())
+            return null;
+        if ($returnCount)
+            return $prepare->rowCount();
+
+        $this->rowsCount = $prepare->rowCount();
+        $collection = array();
+        while ($record = $prepare->fetchObject($this->model->getName())) {
+            $collection[] = $record;
+        }
+
+        return $collection;
     }
 
     public function setData($array = null, $abbr = false)
@@ -251,7 +281,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
                     if ($field == 'id') {
                         $this->setId($value);
                     } else {
-                        $this->set($field, $value);
+                        $this->$field = $value;
                     }
                 }
             }
@@ -281,5 +311,21 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $this->joinTable[$table->getName()] = $table;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRowsCount()
+    {
+        return $this->rowsCount;
+    }
+
+    /**
+     * @param int $rowsCount
+     */
+    public function setRowsCount($rowsCount)
+    {
+        $this->rowsCount = $rowsCount;
     }
 }

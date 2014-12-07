@@ -14,6 +14,10 @@ define('ControllersNameSpace', '\\App\\Code\\Controllers\\');
 
 define('ModelsNameSpace', '\\App\\Code\\Models\\');
 
+define('Uploads', dirname(dirname(__FILE__)) . DS . 'uploads' . DS);
+
+define('Chunks', dirname(dirname(__FILE__)) . DS . 'chunk' . DS);
+
 spl_autoload_extensions(".php");
 spl_autoload_register();
 

@@ -1,23 +1,37 @@
-<?php if($this->collection !== null) : ?>
+<?php if ($this->collection !== null) : ?>
     <?php
-        /**
-            @var $post App\Code\Models\Blogs
-         */
+    /**
+     * @var $post App\Code\Models\Blogs
+     */
     ?>
-    <?php foreach($this->collection as $post) : ?>
-<div class="blog-post">
-    <h2 class="blog-post-title"><?php echo $post->getPostTitle();?></h2>
-    <p class="blog-post-meta"><?php echo $post->getPostDate();?> by <a href="#"><?php
-            echo $this->user->getUsername();?></a></p>
-    <?php echo $post->getPostText();?>
-</div>
-<?php endforeach;?>
-    <?php else : ?>
+    <?php foreach ($this->collection as $post) : ?>
+        <div class="blog-post">
+            <h2 class="blog-post-title"><a href="<?php
+                echo $this->getUrl('blog/view/' . $post->getPostSlugTag());?>"><?php echo $post->getPostTitle(); ?></a>
+            </h2>
+
+            <p class="blog-post-meta"><?php echo $post->getPostDate(); ?> by <a
+                    href="#"><?php
+                    echo $post->getUser()->getUsername();?></a></p>
+            <?php if ($post->getPostPicture() != null) : ?>
+                <p class="img-thumbnail blog-post-meta">
+                    <img class="img-thumbnail"
+                         src="<?php echo $this->getUpload($post->getPostPicture()); ?>" />
+                </p>
+            <?php endif; ?>
+            <?php echo $post->getPostText(); ?>
+        </div>
+        <hr />
+    <?php endforeach; ?>
+<?php else : ?>
     Blog has no entries.
-<?php endif;?>
+<?php endif; ?>
 <nav>
-    <ul class="pager">
-        <li><a href="#">Previous</a></li>
-        <li><a href="#">Next</a></li>
+    <ul class="pagination">
+        <?php for ($i = 1; $i <= $this->pages; ++$i) : ?>
+            <li>
+                <a href="<?php echo $this->getUrl('blog/index/' . $i); ?>"><? echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
     </ul>
 </nav>
