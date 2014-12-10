@@ -36,6 +36,14 @@ abstract class Column implements IColumn
         return $this;
     }
 
+    public function isEmptyAllowed()
+    {
+        if ($this->isRequired() && $this->getValue() == null)
+            return false;
+
+        return true;
+    }
+
     public function isRequired()
     {
         return ($this->required == self::NO);
@@ -48,10 +56,17 @@ abstract class Column implements IColumn
         return $this;
     }
 
-    public function isEmptyAllowed() {
-        if($this->isRequired() && $this->getValue() == null)
-            return false;
-        return true;
+    public function getValue()
+    {
+        return trim($this->value);
+    }
+
+    public function setValue($value)
+    {
+        $this->previousValue = $this->value;
+        $this->value = $value;
+
+        return $this;
     }
 
     public function getType()
@@ -62,18 +77,6 @@ abstract class Column implements IColumn
     public function setType($value)
     {
         $this->columnType = $value;
-        return $this;
-    }
-
-    public function getValue()
-    {
-        return trim($this->value);
-    }
-
-    public function setValue($value)
-    {
-        $this->previousValue = $this->value;
-        $this->value = $value;
 
         return $this;
     }

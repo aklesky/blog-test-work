@@ -17,6 +17,10 @@ $(function () {
             data: _this.serialize()
         }).success(function (response) {
 
+            if(response.error) {
+                return;
+            }
+
             if ($('#manual-fine-uploader').length) {
                 manualuploader.fineUploader("setEndpoint", _this.attr("data-endpoint"));
                 manualuploader.fineUploader("setParams", {

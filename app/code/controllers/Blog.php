@@ -251,16 +251,4 @@ class Blog extends Controller
         $this->response->Redirect(
             $this->request->getUrl('/blog/admin/post/list'));
     }
-
-    /**
-     * @route /test
-     * @request get
-     */
-    public function test()
-    {
-        $blogpost = $this->getModel('BlogPosts');
-        echo '<pre>';
-        print_r($blogpost->selectAll());
-        echo '</pre>';
-    }
 } 

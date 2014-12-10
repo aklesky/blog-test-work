@@ -105,9 +105,6 @@ class DbQuery extends Object
         if ($statement->execute()) {
             while ($var = $statement->fetch()) {
                 $columnType = preg_replace('/(.*)(?:\((.*)\)?)/', '$1', $var['Type']);
-
-                if($var['Field'] == $this->primaryColumn)
-                    continue;
                 /** @var Column $column */
                 $column = App::getTableField($columnType);
                 $column->setType($var['Type'])

@@ -20,8 +20,6 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     protected $rowsCount = 0;
 
-
-
     protected $validation = array();
 
     public function __construct()
@@ -109,17 +107,14 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     public function isValid()
     {
         /** @var Column $column */
-        foreach($this->tableFields as $column){
-            if($column->isEmptyAllowed())
+        foreach ($this->tableFields as $column) {
+            if ($column->isEmptyAllowed()
+                || ($column->getName() == $this->primaryColumn))
                 continue;
             $this->validation[$column->getName()] = false;
         }
-        return empty($this->validation);
-    }
 
-    public function getValidation()
-    {
-        return $this->validation;
+        return empty($this->validation);
     }
 
     public function getId()
@@ -132,7 +127,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $updateData = array();
         /** @var Column $column */
         foreach ($this->tableFields as $column) {
-            $value = $column->getValue();
+            $value = $this->dbAdapter->quote($column->getValue());
             $updateData[] = "`{$column->getName()}`={$value}";
         }
 
@@ -144,6 +139,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $prepare->bindParam(":id", $this->getId(), \PDO::PARAM_INT);
 
         if (!$prepare->execute())
+
             return false;
 
         return $this;
@@ -202,6 +198,11 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $this->id = $id;
 
         return $this;
+    }
+
+    public function getValidation()
+    {
+        return $this->validation;
     }
 
     public function selectFirst()

@@ -70,7 +70,7 @@ class Router extends Object
     {
 
         try {
-            $controllerClass = new \ReflectionClass(App::Controllers . $controllerFileName);
+            $controllerClass = App::getReflectionClass(App::Controllers . $controllerFileName);
 
             $routeName = array(
                 'name' => $controllerClass->getShortName()
