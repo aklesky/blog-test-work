@@ -58,7 +58,7 @@ class Blog extends Controller
      */
     public function view($slugTag = null)
     {
-        if($slugTag == null) {
+        if ($slugTag == null) {
             $this->response->Redirect(
                 $this->request->getUrl());
         }

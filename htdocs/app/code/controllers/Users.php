@@ -25,7 +25,7 @@ class Users extends Controller
             $user = $this->model->create();
             if ($user->addUser($this->request->getPost())) {
                 $this->response->JsonResponse(
-                    array('redirect'=>$this->request->getUrl('blog'))
+                    array('redirect' => $this->request->getUrl('blog'))
                 );
             }
         }

@@ -130,6 +130,11 @@ class Router extends Object
         && $method->isUserDefined() && !$method->isConstructor();
     }
 
+    public function routerHasDefault()
+    {
+        return $this->getDefaultController() != null && $this->getDefaultMethod() != null;
+    }
+
     /**
      * @return mixed
      */
@@ -144,10 +149,5 @@ class Router extends Object
     public function getDefaultMethod()
     {
         return $this->defaultMethod;
-    }
-
-    public function routerHasDefault()
-    {
-        return $this->getDefaultController() != null && $this->getDefaultMethod() != null;
     }
 } 

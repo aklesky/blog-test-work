@@ -28,6 +28,27 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $this->dbAdapter = $database->getAdapter();
         $this->model = new \ReflectionClass($this);
         $this->tableName = $this->capitalsToUnderscore($this->model->getShortName());
+        $this->create();
+    }
+
+    /**
+     * @return bool|ModelAdapter
+     */
+    public function create()
+    {
+        $this->tableFieldsCollected();
+
+        if (($fields = $this->getTableColumns())) {
+            $object = new static();
+            foreach ($fields as $field => $type) {
+                $object->$field = ($type == 'datetime') ?
+                    date('Y-d-m H:i:s') : null;
+            }
+
+            return $object;
+        }
+
+        return false;
     }
 
     public function __set($key, $value)
@@ -77,26 +98,6 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         }
 
         return $this;
-    }
-
-    /**
-     * @return bool|ModelAdapter
-     */
-    public function create()
-    {
-        $this->tableFieldsCollected();
-
-        if (($fields = $this->getTableColumns())) {
-            $object = new static();
-            foreach ($fields as $field => $type) {
-                $object->$field = ($type == 'datetime') ?
-                    date('Y-d-m H:i:s') : null;
-            }
-
-            return $object;
-        }
-
-        return false;
     }
 
     /**

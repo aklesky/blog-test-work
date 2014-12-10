@@ -91,7 +91,7 @@ class App extends Object
 
         if (empty($router) && !$this->router->routerHasDefault()) {
             return $this->invokeController(Controller::getClass(), "notFound", array());
-        } else if($this->router->routerHasDefault() && empty($router)) {
+        } else if ($this->router->routerHasDefault() && empty($router)) {
             return $this->invokeController(
                 $this->router->getDefaultController(),
                 $this->router->getDefaultMethod(),

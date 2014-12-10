@@ -97,16 +97,31 @@ class DbQuery extends Object
 
     public function getTableColumns()
     {
-        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
+        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->getTableName()}");
         if ($statement->execute()) {
+            /**
+             * @todo implement object
+             */
             while ($record = $statement->fetch()) {
-                $this->tableFields[$record['Field']] = $record['Type'];
+                $this->tableFields[$record['Field']] = array(
+                    'type' => $record['Field'],
+                    'required' => $record['No'],
+                    'default' => $record['Default']
+                );
             }
 
             return $this->tableFields;
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     protected function setTableAbbr($column, $field)
@@ -130,14 +145,6 @@ class DbQuery extends Object
     protected function formatField($tableField = null)
     {
         return sprintf('`%s`.`%s`', $this->getTableName(), $tableField);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
     }
 
     protected function hasLimit()
