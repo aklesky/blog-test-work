@@ -108,6 +108,8 @@ class DbQuery extends Object
                     'required' => $record['No'],
                     'default' => $record['Default']
                 );
+
+
             }
 
             return $this->tableFields;

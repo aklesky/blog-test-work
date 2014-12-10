@@ -68,6 +68,10 @@ class App extends Object
         }
     }
 
+    public static function getTableFieldObject()
+    {
+    }
+
     protected function setUp()
     {
         $this->accessLevel = AccessLayer::getInstance();
