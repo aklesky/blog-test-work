@@ -222,10 +222,7 @@ class Blog extends Controller
      */
     public function addComment()
     {
-        $blogComments = $this->getModel('BlogComments')->create();
-        $postId = $this->request->getPost('PostId');
-        $blogPosts = $this->getModel('BlogPosts')->create();
-        $post = $blogPosts->selectById($postId);
+        $blogComments = $this->getModel('BlogComments');
 
         $blogComments->setData($this->request->getPost());
         if(!$blogComments->save()) {
