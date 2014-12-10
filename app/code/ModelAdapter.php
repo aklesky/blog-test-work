@@ -2,6 +2,7 @@
 
 namespace App\Code;
 
+use App\Code\Interfaces\IColumn;
 use App\Code\Interfaces\IDbAdapter;
 
 class ModelAdapter extends DbQuery implements IDbAdapter
@@ -12,8 +13,6 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     const GET = 'get';
 
     protected $model;
-
-
 
     protected $id;
 
@@ -36,35 +35,20 @@ class ModelAdapter extends DbQuery implements IDbAdapter
      */
     public function create()
     {
-        $this->tableFieldsCollected();
-
-        if (($fields = $this->getTableColumns())) {
-            $object = new static();
-            foreach ($fields as $field => $type) {
-                $object->$field = ($type == 'datetime') ?
-                    date('Y-d-m H:i:s') : null;
-            }
-
-            return $object;
-        }
-
-        return false;
+        return new static();
     }
 
     public function __set($key, $value)
     {
-
-
         if (mb_strtolower($key) == 'id') {
             $this->id = $value;
         } else {
-            $this->tableFields[mb_strtolower($key)] = array(
-                'fieldName' => $key,
-                'value' => $value,
-                'original' => $value
-            );
+            /** @var IColumn $column */
+            $column = $this->tableFields[mb_strtolower($key)];
+            if (!empty($column) && ($column instanceof IColumn)) {
+                $column->setValue($value);
+            }
         }
-
 
         return $this;
     }
@@ -86,8 +70,9 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     private function get($key)
     {
         $key = $this->capitalsToUnderscore($key);
-        if (isset($this->dataCollection[$key]))
-            return $this->dataCollection[$key]['value'];
+
+        if (isset($this->tableFields[$key]))
+            return $this->tableFields[$key]->getValue();
 
         return null;
     }
@@ -95,9 +80,8 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     public function set($key, $value)
     {
         $key = $this->capitalsToUnderscore($key);
-        if (isset($this->dataCollection[$key])) {
-            $this->dataCollection[$key]['original'] = $this->get($key);
-            $this->dataCollection[$key]['value'] = $value;
+        if (isset($this->tableFields[$key])) {
+            $this->tableFields[$key]->setValue($value);
         }
 
         return $this;
@@ -123,9 +107,10 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     protected function update()
     {
         $updateData = array();
-        foreach ($this->dataCollection as $record) {
-            $record['value'] = $this->dbAdapter->quote($record['value']);
-            $updateData[] = "`{$record['fieldName']}`={$record['value']}";
+        /** @var Column $column */
+        foreach ($this->tableFields as $column) {
+            $value = $column->getValue();
+            $updateData[] = "`{$column->getName()}`={$value}";
         }
 
         $prepare = $this->dbAdapter->prepare(
@@ -144,9 +129,10 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     protected function insert()
     {
 
-        foreach ($this->dataCollection as $record) {
-            $fields[] = $record['fieldName'];
-            $values[] = $this->dbAdapter->quote($record['value']);
+        /** @var Column $column */
+        foreach ($this->tableFields as $column) {
+            $fields[] = $column->getName();
+            $values[] = $this->dbAdapter->quote($column->getValue());
         }
 
         $prepare = $this->dbAdapter->prepare(
@@ -251,6 +237,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
             $this->rowsCount = $prepare->rowCount();
             $prepare->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE,
                 $this->model->getName());
+
             return $prepare->fetchAll();
         }
 

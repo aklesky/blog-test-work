@@ -69,11 +69,8 @@ class Router extends Object
     private function _getControllerRoutes($controllerFileName = null)
     {
 
-
         try {
             $controllerClass = new \ReflectionClass(App::Controllers . $controllerFileName);
-
-
 
             $routeName = array(
                 'name' => $controllerClass->getShortName()

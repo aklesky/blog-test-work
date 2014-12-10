@@ -31,7 +31,6 @@ class DbQuery extends Object
 
     protected $tableFields = array();
 
-    protected $dataCollection = array();
 
     protected function runLeftJoinQuery()
     {
@@ -104,19 +103,20 @@ class DbQuery extends Object
         $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
         if ($statement->execute()) {
             while ($var = $statement->fetch()) {
-                $columnType = preg_replace('/(.*)(?:\((.*)\)?)/','$1',$var['Type']);
-                $this->tableFields[mb_strtolower($var['Field'])] = App::getTableField($columnType);
+                $columnType = preg_replace('/(.*)(?:\((.*)\)?)/', '$1', $var['Type']);
+
+                /** @var Column $column */
+                $column = App::getTableField($columnType);
+                $column->setType($var['Type'])
+                    ->setName($var['Field'])
+                    ->setRequired($var['Null'])
+                    ->setDefault($var['Default']);
+
+                $this->tableFields[mb_strtolower($var['Field'])] = $column;
             }
         }
-        return $this;
-    }
 
-    /**
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
+        return $this;
     }
 
     protected function setTableAbbr($column, $field)
@@ -140,6 +140,14 @@ class DbQuery extends Object
     protected function formatField($tableField = null)
     {
         return sprintf('`%s`.`%s`', $this->getTableName(), $tableField);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     protected function hasLimit()

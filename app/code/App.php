@@ -2,8 +2,16 @@
 
 namespace App\Code;
 
+use App\Code\Interfaces\IColumn;
+
 class App extends Object
 {
+
+    const Controllers = 'App\\Code\\Controllers\\';
+
+    const Models = 'App\\Code\\Models\\';
+
+    const Columns = 'App\\Code\\Columns\\';
 
     /**
      * @var Response
@@ -32,12 +40,6 @@ class App extends Object
     protected $modelsDirectory;
 
     protected $viewsDirectory;
-
-    const Controllers = 'App\\Code\\Controllers\\';
-
-    const Models = 'App\\Code\\Models\\';
-
-    const Fields = 'App\\Code\\Fields\\';
 
     public function __construct(
         $controllersDirectory = null,
@@ -77,10 +79,49 @@ class App extends Object
         return App::getObjectInstance(self::Models . $model);
     }
 
+    /**
+     * @param null $object
+     * @param array $args
+     * @return null|object
+     */
+    public static function getObjectInstance($object = null, $args = array())
+    {
+        if ($object instanceof \ReflectionClass)
+            return $object->newInstanceArgs($args);
+
+        try {
+            $reflection = self::getReflectionClass($object);
+
+            return $reflection->newInstanceArgs($args);
+        } catch (\LogicException $e) {
+            return $e->getMessage();
+        } catch (\ReflectionException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @param $object
+     * @return null|\ReflectionClass
+     */
+    public static function getReflectionClass($object)
+    {
+        try {
+            return new \ReflectionClass($object);
+        } catch (\LogicException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $field
+     * @return null|IColumn
+     */
     public static function getTableField($field)
     {
-        $field = mb_convert_case($field, MB_CASE_TITLE, 'UTF-8');;
-        return App::getObjectInstance(self::Fields . $field);
+        $field = mb_convert_case($field, MB_CASE_TITLE, 'UTF-8');
+
+        return App::getObjectInstance(self::Columns . $field);
     }
 
     protected function setUp()
@@ -156,46 +197,10 @@ class App extends Object
             $method->invokeArgs($instance, $arguments);
         } catch (\Exception $e) {
             $this->response->ViewResponse($e->getMessage(), 500);
+
             return null;
         }
-
 
         return $this;
-    }
-
-    /**
-     * @param $object
-     * @return null|\ReflectionClass
-     */
-    public static function getReflectionClass($object)
-    {
-        try {
-            return new \ReflectionClass($object);
-        } catch (\LogicException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * @param null $object
-     * @param array $args
-     * @return null|object
-     */
-    public static function getObjectInstance($object = null, $args = array())
-    {
-        if ($object instanceof \ReflectionClass)
-            return $object->newInstanceArgs($args);
-
-        try {
-            $reflection = self::getReflectionClass($object);
-
-            return $reflection->newInstanceArgs($args);
-        } catch (\LogicException $e) {
-            return null;
-        }
-
-        catch (\ReflectionException $e) {
-            return null;
-        }
     }
 }
