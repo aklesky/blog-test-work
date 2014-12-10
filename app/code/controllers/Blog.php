@@ -28,7 +28,7 @@ class Blog extends Controller
      * @param int $page
      * @return string|void
      * @request get
-     * @route /index(?:/([0-9])?)?
+     * @route /(?:([0-9])?)?
      * @default /
      */
 
