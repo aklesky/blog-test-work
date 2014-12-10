@@ -3,6 +3,7 @@
 namespace App\Code\Controllers;
 
 use app\code\Controller;
+use app\code\User;
 use App\Vendors\FileUploader\qqFileUploader;
 
 /**
@@ -167,9 +168,9 @@ class Blog extends Controller
             }
 
             $post->setData($data);
+            $post->setUserId(User::getUserId());
 
-            $post->setPostSchedule(
-                date("Y-m-d", strtotime($post->getPostSchedule())));
+            $post->setPostSchedule($post->getPostSchedule());
 
             if (!$post->save()) {
                 $this->response->JsonResponse(
