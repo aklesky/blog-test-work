@@ -97,7 +97,7 @@ class DbQuery extends Object
 
     public function getTableColumns()
     {
-        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->getTableName()}");
+        $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
         if ($statement->execute()) {
             /**
              * @todo implement object

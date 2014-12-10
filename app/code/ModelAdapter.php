@@ -28,7 +28,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $this->dbAdapter = $database->getAdapter();
         $this->model = new \ReflectionClass($this);
         $this->tableName = $this->capitalsToUnderscore($this->model->getShortName());
-        $this->create();
+        $this->getTableColumns();
     }
 
     /**
