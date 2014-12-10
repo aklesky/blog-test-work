@@ -228,7 +228,12 @@ class Blog extends Controller
         $post = $blogPosts->selectById($postId);
 
         $blogComments->setData($this->request->getPost());
-        $blogComments->save();
+        if(!$blogComments->save()) {
+            $this->response->JsonResponse(
+                array('error' => true)
+            );
+            return;
+        }
         $this->response->JsonResponse(
             array('self' => true)
         );
