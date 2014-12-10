@@ -13,7 +13,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     protected $model;
 
-    protected $recordData = array();
+
 
     protected $id;
 
@@ -53,15 +53,18 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     public function __set($key, $value)
     {
+
+
         if (mb_strtolower($key) == 'id') {
             $this->id = $value;
         } else {
-            $this->recordData[mb_strtolower($key)] = array(
+            $this->tableFields[mb_strtolower($key)] = array(
                 'fieldName' => $key,
                 'value' => $value,
                 'original' => $value
             );
         }
+
 
         return $this;
     }
@@ -83,8 +86,8 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     private function get($key)
     {
         $key = $this->capitalsToUnderscore($key);
-        if (isset($this->recordData[$key]))
-            return $this->recordData[$key]['value'];
+        if (isset($this->dataCollection[$key]))
+            return $this->dataCollection[$key]['value'];
 
         return null;
     }
@@ -92,9 +95,9 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     public function set($key, $value)
     {
         $key = $this->capitalsToUnderscore($key);
-        if (isset($this->recordData[$key])) {
-            $this->recordData[$key]['original'] = $this->get($key);
-            $this->recordData[$key]['value'] = $value;
+        if (isset($this->dataCollection[$key])) {
+            $this->dataCollection[$key]['original'] = $this->get($key);
+            $this->dataCollection[$key]['value'] = $value;
         }
 
         return $this;
@@ -120,7 +123,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     protected function update()
     {
         $updateData = array();
-        foreach ($this->recordData as $record) {
+        foreach ($this->dataCollection as $record) {
             $record['value'] = $this->dbAdapter->quote($record['value']);
             $updateData[] = "`{$record['fieldName']}`={$record['value']}";
         }
@@ -141,7 +144,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     protected function insert()
     {
 
-        foreach ($this->recordData as $record) {
+        foreach ($this->dataCollection as $record) {
             $fields[] = $record['fieldName'];
             $values[] = $this->dbAdapter->quote($record['value']);
         }
@@ -177,8 +180,10 @@ class ModelAdapter extends DbQuery implements IDbAdapter
             "select * from `{$this->tableName}` where `{$field}` = :value"
         );
         $prepare->bindParam(':value', $value);
+        $prepare->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE,
+            $this->model->getName());
         if ($prepare->execute())
-            return $prepare->fetchObject($this->model->getName());
+            return $prepare->fetch();
 
         return false;
     }
@@ -195,8 +200,11 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         $prepare = $this->dbAdapter->prepare(
             "select * from `{$this->tableName}` limit 1"
         );
+        $prepare->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE,
+            $this->model->getName());
+
         if ($prepare->execute())
-            return $prepare->fetchObject($this->model->getName());
+            return $prepare->fetch();
 
         return null;
     }
@@ -241,12 +249,9 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
         if ($prepare->execute() && $prepare->rowCount() > 0) {
             $this->rowsCount = $prepare->rowCount();
-            $collection = array();
-            while ($record = $prepare->fetchObject($this->model->getName())) {
-                $collection[] = $record;
-            }
-
-            return $collection;
+            $prepare->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE,
+                $this->model->getName());
+            return $prepare->fetchAll();
         }
 
         return null;
@@ -266,18 +271,17 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         }
 
         $prepare = $this->dbAdapter->query($query);
+        $prepare->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE,
+            $this->model->getName());
+
         if (!$prepare->execute())
             return null;
         if ($returnCount)
             return $prepare->rowCount();
 
         $this->rowsCount = $prepare->rowCount();
-        $collection = array();
-        while ($record = $prepare->fetchObject($this->model->getName())) {
-            $collection[] = $record;
-        }
 
-        return $collection;
+        return $prepare->fetchAll();
     }
 
     public function setData($array = null, $abbr = false)

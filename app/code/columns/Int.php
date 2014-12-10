@@ -1,11 +1,10 @@
 <?php
 
-namespace app\code\fields;
+namespace app\code\columns;
 
-use App\Code\Interfaces\IField;
+use App\Code\Interfaces\IColumn;
 
-
-class Varchar implements IField
+class Int implements IColumn
 {
     public function getName()
     {

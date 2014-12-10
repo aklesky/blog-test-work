@@ -1,16 +1,11 @@
 <?php
 
-namespace app\code\fields;
+namespace app\code\columns;
 
-use App\Code\Interfaces\IField;
+use App\Code\Interfaces\IColumn;
 
-class Integer implements IField
+class Date implements IColumn
 {
-    public function getName()
-    {
-        // TODO: Implement getName() method.
-    }
-
     public function setName()
     {
         // TODO: Implement setName() method.
@@ -54,5 +49,10 @@ class Integer implements IField
     public function setDefault()
     {
         // TODO: Implement setDefault() method.
+    }
+
+    public function getName()
+    {
+        // TODO: Implement getName() method.
     }
 }

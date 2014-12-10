@@ -1,10 +1,10 @@
 <?php
-namespace app\code\fields;
 
-use App\Code\Interfaces\IField;
-use App\Code\Object;
+namespace app\code\columns;
 
-class Datetime implements IField
+use App\Code\Interfaces\IColumn;
+
+class Varchar implements IColumn
 {
     public function getName()
     {

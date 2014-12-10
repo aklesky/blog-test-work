@@ -3,7 +3,7 @@
 namespace App\Code\Interfaces;
 
 
-interface IField
+interface IColumn
 {
     public function getName();
     public function setName();

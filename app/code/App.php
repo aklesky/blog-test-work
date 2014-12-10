@@ -79,6 +79,7 @@ class App extends Object
 
     public static function getTableField($field)
     {
+        $field = mb_convert_case($field, MB_CASE_TITLE, 'UTF-8');;
         return App::getObjectInstance(self::Fields . $field);
     }
 
@@ -170,7 +171,7 @@ class App extends Object
     {
         try {
             return new \ReflectionClass($object);
-        } catch (\ReflectionException $e) {
+        } catch (\LogicException $e) {
             return null;
         }
     }
@@ -189,7 +190,11 @@ class App extends Object
             $reflection = self::getReflectionClass($object);
 
             return $reflection->newInstanceArgs($args);
-        } catch (\ReflectionException $e) {
+        } catch (\LogicException $e) {
+            return null;
+        }
+
+        catch (\ReflectionException $e) {
             return null;
         }
     }
