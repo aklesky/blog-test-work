@@ -27,4 +27,6 @@ interface IColumn
     public function restore();
 
     public function getPrevious();
+
+    public function isEmptyAllowed();
 } 

@@ -17,6 +17,8 @@ abstract class Column implements IColumn
 
     protected $columnName = null;
 
+    protected $columnType = null;
+
     public function getPrevious()
     {
         return $this->previousValue;
@@ -46,19 +48,26 @@ abstract class Column implements IColumn
         return $this;
     }
 
+    public function isEmptyAllowed() {
+        if($this->isRequired() && $this->getValue() == null)
+            return false;
+        return true;
+    }
+
     public function getType()
     {
-        // TODO: Implement getType() method.
+        return $this->columnType;
     }
 
     public function setType($value)
     {
+        $this->columnType = $value;
         return $this;
     }
 
     public function getValue()
     {
-        return $this->value;
+        return trim($this->value);
     }
 
     public function setValue($value)
@@ -81,9 +90,10 @@ abstract class Column implements IColumn
 
     public function restore()
     {
-        if(!empty($this->previousValue)){
+        if (!empty($this->previousValue)) {
             $this->value = $this->previousValue;
         }
+
         return $this;
     }
 }

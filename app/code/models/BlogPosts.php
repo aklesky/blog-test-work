@@ -126,6 +126,7 @@ class BlogPosts extends ModelAdapter
             $this->user = $users->setData($collection[0], true);
 
             foreach ($collection as $records) {
+                /** @var BlogComments $object */
                 $object = $comments->create()
                     ->setData($records, true);
                 if ($object->getId() != null) {

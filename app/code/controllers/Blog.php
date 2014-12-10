@@ -172,7 +172,13 @@ class Blog extends Controller
                 date("Y-m-d", strtotime($post->getPostSchedule())));
 
             if (!$post->save()) {
-                $this->response->JsonResponse($post->getErrorMessage());
+                $this->response->JsonResponse(
+                    array(
+                        'error' => true,
+                        $post->getErrorMessage(),
+                        'fields' => $post->getValidation()
+                    )
+                );
             } else {
                 $this->response->JsonResponse(
                     array(

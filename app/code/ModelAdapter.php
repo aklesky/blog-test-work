@@ -20,12 +20,16 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     protected $rowsCount = 0;
 
+
+
+    protected $validation = array();
+
     public function __construct()
     {
         /** @var Database $database */
         $database = Database::getInstance();
         $this->dbAdapter = $database->getAdapter();
-        $this->model = new \ReflectionClass($this);
+        $this->model = App::getReflectionClass($this);
         $this->tableName = $this->capitalsToUnderscore($this->model->getShortName());
         $this->getTableColumns();
     }
@@ -40,7 +44,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
     public function __set($key, $value)
     {
-        if (mb_strtolower($key) == 'id') {
+        if (mb_strtolower($key) == $this->primaryColumn) {
             $this->id = $value;
         } else {
             /** @var IColumn $column */
@@ -92,11 +96,30 @@ class ModelAdapter extends DbQuery implements IDbAdapter
      */
     public function save()
     {
+        if (!$this->isValid())
+            return false;
+
         if ($this->getId() !== null) {
             return $this->update();
         }
 
         return $this->insert();
+    }
+
+    public function isValid()
+    {
+        /** @var Column $column */
+        foreach($this->tableFields as $column){
+            if($column->isEmptyAllowed())
+                continue;
+            $this->validation[$column->getName()] = false;
+        }
+        return empty($this->validation);
+    }
+
+    public function getValidation()
+    {
+        return $this->validation;
     }
 
     public function getId()
@@ -115,7 +138,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
 
         $prepare = $this->dbAdapter->prepare(
             "update {$this->tableName} set " . implode(',', $updateData) .
-            " where `Id`= :id"
+            " where `{$this->primaryColumn}` = :id"
         );
 
         $prepare->bindParam(":id", $this->getId(), \PDO::PARAM_INT);
@@ -154,7 +177,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
         if (empty($id))
             return false;
 
-        return $this->selectOneBy('id', $id);
+        return $this->selectOneBy($this->primaryColumn, $id);
     }
 
     public function selectOneBy($field, $value)
@@ -207,7 +230,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
     public function deleteById($id)
     {
         $prepare = $this->dbAdapter->prepare(
-            "delete from `{$this->tableName}` where `Id` = :id"
+            "delete from `{$this->tableName}` where `{$this->primaryColumn}` = :id"
         );
         $prepare->bindParam(':id', $id, \PDO::PARAM_INT);
 
@@ -282,7 +305,7 @@ class ModelAdapter extends DbQuery implements IDbAdapter
             } else {
                 if (preg_match("/^{$this->tableAbbr}\_+(.*)$/i", $key)) {
                     $field = str_replace($this->tableAbbr . '_', '', $key);
-                    if ($field == 'id') {
+                    if ($field == $this->primaryColumn) {
                         $this->setId($value);
                     } else {
                         $this->$field = $value;
