@@ -2,8 +2,21 @@
 
 namespace App\Code;
 
+use App\Code\Interfaces\IColumn;
+
 class App extends Object
 {
+
+    const Controllers = 'App\\Code\\Controllers\\';
+
+    const Models = 'App\\Code\\Models\\';
+
+    const Columns = 'App\\Code\\Columns\\';
+
+    /**
+     * @var Response
+     */
+    protected $response;
 
     /**
      * @var Request
@@ -57,21 +70,65 @@ class App extends Object
         $instance->setUp();
     }
 
+    public static function getController($controller)
+    {
+    }
+
     public static function getModel($model)
     {
-        try {
-            $reflection = new \ReflectionClass(ModelsNameSpace . $model);
+        return App::getObjectInstance(self::Models . $model);
+    }
 
-            return $reflection->newInstance();
+    /**
+     * @param null $object
+     * @param array $args
+     * @return null|object
+     */
+    public static function getObjectInstance($object = null, $args = array())
+    {
+        if ($object instanceof \ReflectionClass)
+            return $object->newInstanceArgs($args);
+
+        try {
+            $reflection = self::getReflectionClass($object);
+
+            return $reflection->newInstanceArgs($args);
+        } catch (\LogicException $e) {
+            return $e->getMessage();
         } catch (\ReflectionException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @param $object
+     * @return null|\ReflectionClass
+     */
+    public static function getReflectionClass($object)
+    {
+        try {
+            return new \ReflectionClass($object);
+        } catch (\LogicException $e) {
             return null;
         }
+    }
+
+    /**
+     * @param $field
+     * @return null|IColumn
+     */
+    public static function getTableField($field)
+    {
+        $field = mb_convert_case($field, MB_CASE_TITLE, 'UTF-8');
+
+        return App::getObjectInstance(self::Columns . $field);
     }
 
     protected function setUp()
     {
         $this->accessLevel = AccessLayer::getInstance();
         $this->request = Request::getInstance();
+        $this->response = Response::getInstance();
         $this->router = Router::getInstance();
         $this->router = Router::getInstance();
         $this->router->scanRoutes($this->controllersDirectory);
@@ -91,7 +148,7 @@ class App extends Object
 
         if (empty($router) && !$this->router->routerHasDefault()) {
             return $this->invokeController(Controller::getClass(), "notFound", array());
-        } else if($this->router->routerHasDefault() && empty($router)) {
+        } else if ($this->router->routerHasDefault() && empty($router)) {
             return $this->invokeController(
                 $this->router->getDefaultController(),
                 $this->router->getDefaultMethod(),
@@ -107,32 +164,43 @@ class App extends Object
 
     protected function invokeController($controller, $action = null, $arguments = null)
     {
+        if (($reflection = $this->getReflectionClass($controller)) == null) {
+            $this->response->ViewResponse(null, 404);
+
+            return null;
+        }
+
+        $method = $reflection->getMethod($action);
+
+        $description = $method->getDocComment();
+
+        if (!$this->request->isRequestAllowed($description)) {
+            $this->response->ViewResponse(null, 405);
+
+            return null;
+        }
+
+        if (!$this->accessLevel->canAccess($description)) {
+            $this->response->ViewResponse(null, 403);
+
+            return null;
+        }
+
         try {
-            $reflection = new \ReflectionClass($controller);
-            $instance = $reflection->newInstance(
+            $instance = $this->getObjectInstance($reflection, array(
                 Response::getInstance(),
                 Request::getInstance(),
                 View::getInstance()
                     ->setView($action, $reflection->getShortName())
-            );
-
-            $method = $reflection->getMethod($action);
-
-            $description = $method->getDocComment();
-
-            if (!$this->request->isRequestAllowed($description))
-                return null;
-
-            if (!$this->accessLevel->canAccess($description))
-                return null;
+            ));
 
             $method->invokeArgs($instance, $arguments);
-        } catch (\LogicException $e) {
-            echo $e->getMessage();
-        } catch (\ReflectionException $e) {
-            echo $e->getMessage();
+        } catch (\Exception $e) {
+            $this->response->ViewResponse($e->getMessage(), 500);
+
+            return null;
         }
 
-        return null;
+        return $this;
     }
 }

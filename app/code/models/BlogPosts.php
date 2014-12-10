@@ -80,7 +80,7 @@ class BlogPosts extends ModelAdapter
 
         if (!empty($collection)) {
 
-            $this->blog = $blog->create()->setData($collection[0], true);
+            $this->blog = $blog->setData($collection[0], true);
 
             foreach ($collection as $records) {
                 $object = $this->create()
@@ -123,9 +123,10 @@ class BlogPosts extends ModelAdapter
         if (!empty($collection)) {
 
             $this->setData($collection[0], true);
-            $this->user = $users->create()->setData($collection[0], true);
+            $this->user = $users->setData($collection[0], true);
 
             foreach ($collection as $records) {
+                /** @var BlogComments $object */
                 $object = $comments->create()
                     ->setData($records, true);
                 if ($object->getId() != null) {

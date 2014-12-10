@@ -29,6 +29,10 @@ class DbQuery extends Object
 
     protected $orderDirection = 'desc';
 
+    protected $tableFields = array();
+
+    protected $primaryColumn = 'id';
+
     protected function runLeftJoinQuery()
     {
         $fieldsToSelect[] = $this->makeSelectableTableFields(true);
@@ -99,11 +103,17 @@ class DbQuery extends Object
     {
         $statement = $this->dbAdapter->query("SHOW columns FROM {$this->tableName}");
         if ($statement->execute()) {
-            while ($record = $statement->fetch()) {
-                $this->tableFields[$record['Field']] = $record['Type'];
-            }
+            while ($var = $statement->fetch()) {
+                $columnType = preg_replace('/(.*)(?:\((.*)\)?)/', '$1', $var['Type']);
+                /** @var Column $column */
+                $column = App::getTableField($columnType);
+                $column->setType($var['Type'])
+                    ->setName($var['Field'])
+                    ->setRequired($var['Null'])
+                    ->setDefault($var['Default']);
 
-            return $this->tableFields;
+                $this->tableFields[mb_strtolower($var['Field'])] = $column;
+            }
         }
 
         return $this;

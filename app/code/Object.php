@@ -82,4 +82,4 @@ abstract class Object
 
         return trim($matches[1]);
     }
-} 
+}

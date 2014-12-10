@@ -49,9 +49,9 @@ class Router extends Object
 
     public function scanRoutes($directoryToScan)
     {
+
         if (!is_readable($directoryToScan) && !is_dir($directoryToScan))
             return false;
-
         $directoryIterator = new \DirectoryIterator($directoryToScan);
         foreach ($directoryIterator as $fileInfo) {
             if ($fileInfo->isDot())
@@ -68,8 +68,9 @@ class Router extends Object
 
     private function _getControllerRoutes($controllerFileName = null)
     {
+
         try {
-            $controllerClass = new \ReflectionClass(ControllersNameSpace . $controllerFileName);
+            $controllerClass = App::getReflectionClass(App::Controllers . $controllerFileName);
 
             $routeName = array(
                 'name' => $controllerClass->getShortName()
@@ -130,6 +131,11 @@ class Router extends Object
         && $method->isUserDefined() && !$method->isConstructor();
     }
 
+    public function routerHasDefault()
+    {
+        return $this->getDefaultController() != null && $this->getDefaultMethod() != null;
+    }
+
     /**
      * @return mixed
      */
@@ -144,10 +150,5 @@ class Router extends Object
     public function getDefaultMethod()
     {
         return $this->defaultMethod;
-    }
-
-    public function routerHasDefault()
-    {
-        return $this->getDefaultController() != null && $this->getDefaultMethod() != null;
     }
 } 

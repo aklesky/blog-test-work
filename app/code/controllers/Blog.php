@@ -3,6 +3,7 @@
 namespace App\Code\Controllers;
 
 use app\code\Controller;
+use app\code\User;
 use App\Vendors\FileUploader\qqFileUploader;
 
 /**
@@ -58,7 +59,7 @@ class Blog extends Controller
      */
     public function view($slugTag = null)
     {
-        if($slugTag == null) {
+        if ($slugTag == null) {
             $this->response->Redirect(
                 $this->request->getUrl());
         }
@@ -167,12 +168,18 @@ class Blog extends Controller
             }
 
             $post->setData($data);
+            $post->setUserId(User::getUserId());
 
-            $post->setPostSchedule(
-                date("Y-m-d", strtotime($post->getPostSchedule())));
+            $post->setPostSchedule($post->getPostSchedule());
 
             if (!$post->save()) {
-                $this->response->JsonResponse($post->getErrorMessage());
+                $this->response->JsonResponse(
+                    array(
+                        'error' => true,
+                        $post->getErrorMessage(),
+                        'fields' => $post->getValidation()
+                    )
+                );
             } else {
                 $this->response->JsonResponse(
                     array(
@@ -216,13 +223,15 @@ class Blog extends Controller
      */
     public function addComment()
     {
-        $blogComments = $this->getModel('BlogComments')->create();
-        $postId = $this->request->getPost('PostId');
-        $blogPosts = $this->getModel('BlogPosts')->create();
-        $post = $blogPosts->selectById($postId);
+        $blogComments = $this->getModel('BlogComments');
 
         $blogComments->setData($this->request->getPost());
-        $blogComments->save();
+        if(!$blogComments->save()) {
+            $this->response->JsonResponse(
+                array('error' => true)
+            );
+            return;
+        }
         $this->response->JsonResponse(
             array('self' => true)
         );
