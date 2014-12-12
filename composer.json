@@ -1,0 +1,14 @@
+{
+    "name": "aklesky/blog-test-work",
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*"
+    },
+    "authors": [
+        {
+            "name": "Aleksey Semiglasov",
+            "email": "aleksey.semiglasov@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
