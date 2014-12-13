@@ -157,37 +157,44 @@ class Blog extends Controller
     public function savePost()
     {
         if ($this->request->isAjaxPost()) {
-            $model = $this->getModel('BlogPosts');
 
-            $data = $this->request->getPost();
-
-            $id = $this->request->getPost('id');
-
-            if (!($post = $model->selectById($id))) {
-                $post = $model->create();
-            }
-
-            $post->setData($data);
-            $post->setUserId(User::getUserId());
-
-            $post->setPostSchedule($post->getPostSchedule());
-
-            if (!$post->save()) {
-                $this->response->JsonResponse(
-                    array(
-                        'error' => true,
-                        $post->getErrorMessage(),
-                        'fields' => $post->getValidation()
-                    )
-                );
-            } else {
-                $this->response->JsonResponse(
-                    array(
-                        'id' => $post->getId(),
-                        'redirect' => $this->request->getUrl('blog/admin/edit/post/' . $post->getId())
-                    )
-                );
-            }
+            $this->response->JsonResponse(
+                array(
+                    $_POST,
+                    $_FILES
+                )
+            );
+//            $model = $this->getModel('BlogPosts');
+//
+//            $data = $this->request->getPost();
+//
+//            $id = $this->request->getPost('id');
+//
+//            if (!($post = $model->selectById($id))) {
+//                $post = $model->create();
+//            }
+//
+//            $post->setData($data);
+//            $post->setUserId(User::getUserId());
+//
+//            $post->setPostSchedule($post->getPostSchedule());
+//
+//            if (!$post->save()) {
+//                $this->response->JsonResponse(
+//                    array(
+//                        'error' => true,
+//                        $post->getErrorMessage(),
+//                        'fields' => $post->getValidation()
+//                    )
+//                );
+//            } else {
+//                $this->response->JsonResponse(
+//                    array(
+//                        'id' => $post->getId(),
+//                        'redirect' => $this->request->getUrl('blog/admin/edit/post/' . $post->getId())
+//                    )
+//                );
+//            }
         }
     }
 

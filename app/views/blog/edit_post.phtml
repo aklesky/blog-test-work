@@ -60,21 +60,4 @@ echo $this->getUrl('blog/admin/upload');?>" method="post" role="form">
         </div>
     </div>
 </form>
-<script type="text/javascript" src="<?php echo $this->getJs('tinymce/tinymce.min.js')?>"></script>
-<script type="text/javascript">
-    tinymce.init({
-        selector: "textarea",
-        plugins: [
-            "advlist autolink lists link image charmap print preview anchor",
-            "searchreplace visualblocks code",
-            "media table contextmenu paste"
-        ],
-        toolbar: "styleselect | bold italic | alignleft aligncenter alignright | bullist numlist  link image",
-        setup: function (editor) {
-            editor.on('change', function () {
-                tinymce.triggerSave();
-            });
-        }
-    });
-</script>
 <?php endif;?>

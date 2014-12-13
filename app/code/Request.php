@@ -131,12 +131,12 @@ class Request extends Object
     public function getRelativeUrl()
     {
         return '//' . $this->getHeader('HTTP_HOST') . DS .
-        trim($this->getBasePath(), DS) . DS;
+        $this->getBasePath(). DS;
     }
 
-    protected function getBasePath()
+    public function getBasePath()
     {
-        return $this->clearPath(dirname($this->getHeader('SCRIPT_NAME')));
+        return trim($this->clearPath(dirname($this->getHeader('SCRIPT_NAME'))),DS);
     }
 
     protected function clearPath($path = null)
@@ -150,12 +150,14 @@ class Request extends Object
 
     public function getUrl($path = null)
     {
-        return $this->getBaseUrl() . $path;
+
+        return $this->getBaseUrl() . trim($path,DS);
     }
 
     public function getBaseUrl()
     {
-        return $this->getBaseHost() . rtrim($this->getBasePath(), DS) . DS;
+        return $this->getBaseHost() .
+        (($basePath = $this->getBasePath()) != null ? $basePath . DS : null) ;
     }
 
     public function getBaseHost()

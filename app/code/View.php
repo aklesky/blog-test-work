@@ -151,10 +151,6 @@ class View extends Object
         return self::getMedia() . 'css' . DS . $filename;
     }
 
-    public static function getMedia()
-    {
-        return Request::getInstance()->getRelativeUrl() . 'media' . DS;
-    }
 
     public static function getJs($filename = null)
     {
@@ -164,12 +160,14 @@ class View extends Object
         return self::getMedia() . 'js' . DS . $filename;
     }
 
+    public static function getMedia()
+    {
+        return Request::getInstance()->getRelativeUrl() . DS . 'media' . DS;
+    }
+
     public static function getUpload($filename)
     {
-        //        if (!is_readable(Uploads . $filename))
-        //            return null;
-
-        return Request::getInstance()->getRelativeUrl() . 'uploads' . DS .
+        return Request::getInstance()->getRelativeUrl() . DS . 'uploads' . DS .
         $filename;
     }
 }
