@@ -20,7 +20,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         self::$request = null;
     }
 
-    public function testFail()
+    public function testCustomDomainWithLongHtdocsPath()
     {
         $httpHost = 'custom.domain';
         $baseHost = 'http://' . $httpHost . DIRECTORY_SEPARATOR;
@@ -39,7 +39,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::$request->getUrl('/blog/1'), $baseUrl . 'blog/1');
     }
 
-    public function testFail2()
+    public function testCustomDomainWithWithoutHtdocsPath()
     {
 
         $httpHost = 'blog.local';
