@@ -19,13 +19,6 @@ define(['tinymce',
             multiple: false,
             text: {
                 uploadButton: '<a href="#" class="btn btn-block btn-default">Select Files</a>'
-            },
-            messages : {
-                typeError: "{file} has an invalid extension. Valid extension(s): {extensions}."
-            }
-            ,
-            showMessage : function(msg) {
-                alert(msg);
             }
 
         });
