@@ -9,9 +9,9 @@ use App\Code\User;
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-main="<?php echo $this->getJs('app');?>" src="<?php echo $this->getJs('requirejs-2.1.15.min.js');?>"></script>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-
     <!-- Optional theme -->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
@@ -20,7 +20,6 @@ use App\Code\User;
     <link rel="stylesheet" href="<?php echo $this::getCss('fineuploader.css'); ?>">
     <link rel="stylesheet" href="<?php echo $this::getCss('preloader.css'); ?>">
     <!-- Latest compiled and minified JavaScript -->
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
     <?php if($this->getCanonicalUrl() != null) : ?>
     <link rel="canonical" href="<?php echo $this->getCanonicalUrl(); ?>" />
     <?php endif;?>
@@ -122,20 +121,5 @@ use App\Code\User;
         <a href="#">Back to top</a>
     </p>
 </footer>
-
-<script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script src="<?php echo $this->getJs("fileuploader/header.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/util.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/button.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/handler.base.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/handler.form.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/handler.xhr.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/uploader.basic.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/dnd.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/uploader.js");?>"></script>
-<script src="<?php echo $this->getJs("fileuploader/jquery-plugin.js");?>"></script>
-
-<script src="<?php echo $this->getJs('form.js'); ?>"></script>
 </body>
 </html>
