@@ -11,8 +11,14 @@ echo $this->getUrl('blog/admin/upload');?>" method="post" role="form">
         <input type="hidden" name="id" id="post_id" value="<?php echo $this->editable->getId();?>"/>
     <?php endif;?>
     <div class="form-group">
+
         <label for="post_title" class="col-sm-4 control-label text-left">Post Title</label>
         <div class="col-sm-8">
+            <div class="alert alert-danger hidden well-sm" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span class="alert-danger-msg"></span>
+            </div>
             <input type="text" required="required" class="form-control" name="PostTitle" id="post_title" placeholder="Post Title" value="<?php
             echo $this->editable ? $this->editable->getPostTitle() : null; ?>">
         </div>
@@ -28,6 +34,11 @@ echo $this->getUrl('blog/admin/upload');?>" method="post" role="form">
     <div class="form-group">
         <label for="post_slug_tag" class="col-sm-4 control-label text-left">Slug Tag</label>
         <div class="col-sm-8">
+            <div class="alert alert-danger hidden well-sm" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span class="alert-danger-msg"></span>
+            </div>
             <input type="text" required="required" class="form-control" name="PostSlugTag" id="post_slug_tag" placeholder="Slug Tag" value="<?php
             echo $this->editable ? $this->editable->getPostSlugTag() : null; ?>">
         </div>

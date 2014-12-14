@@ -32,7 +32,7 @@ requirejs.config({
             exports : 'qq'
         }
     },
-    waitSeconds : 0
+    waitSeconds : 1
 });
 
 requirejs([

@@ -23,6 +23,7 @@ define(['jquery'], function ($) {
                 data = response;
             });
 
+
             expect(data.Test).toBe('Message');
             expect(data.Second).toBe('Response');
         })
