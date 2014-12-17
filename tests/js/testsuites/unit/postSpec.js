@@ -44,5 +44,13 @@ define(['jquery'], function ($) {
             expect(responseData.message).toBeObject();
         });
 
+        it('Testing how a response would inject error messages', function () {
+            'use strict';
+
+            var element =$('#post_title').closest('div.alert');
+            var msg = element.find('.alert-danger-msg');
+            expect(msg.text().length).toEqual(0);
+        });
+
     });
 });
